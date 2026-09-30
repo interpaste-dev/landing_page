@@ -1,35 +1,37 @@
 ---
 title: 'Klucz znajomego się zmienił. Czy to atak?'
-description: 'Widzisz „Klucz bezpieczeństwa się zmienił” w Komunikatorze? Poznaj zwykłe, niewinne powody, porównaj nowy numer i wstrzymaj wysyłanie do czasu weryfikacji.'
+description: 'Widzisz „klucz urządzenia się zmienił” w Komunikatorze? Poznaj zwykłe, niewinne powody, porównaj numer bezpieczeństwa i zdecyduj, czy przyjąć nowy klucz.'
 category: verification
 translationKey: key-changed
-updatedDate: 2026-09-20
-appliesTo: '0.9+'
+updatedDate: 2026-09-30
+appliesTo: '0.1+'
 popular: 3
 ---
 
-Gdy klucz kontaktu się zmieni, Komunikator pokaże ostrzeżenie w rodzaju **„Klucz bezpieczeństwa Zosi się zmienił”** z poprzednim i nowym odciskiem. Zwykle powód jest niewinny:
+Gdy klucz urządzenia rozmówcy się zmieni, Komunikator pokaże w rozmowie pasek: **„Klucz urządzenia … się zmienił. Porównajcie numer, zanim wyślesz coś ważnego.”** Rozmowa dostaje oznaczenie **Niezweryfikowana**. To samo ostrzeżenie zobaczysz, gdy klucz rozmówcy różni się od tego, który zna serwer.
 
-- przeinstalował aplikację,
-- dodał nowe urządzenie (np. nowy telefon),
-- przywrócił konto z kopii zapasowej.
+Zwykle powód jest niewinny:
+
+- przeinstalował aplikację albo zalogował się ponownie,
+- dodał nowe urządzenie,
+- wylogował stare.
 
 Rzadziej oznacza to, że ktoś próbuje się pod niego podszyć. Dlatego warto to sprawdzić, zanim wyślesz coś ważnego.
 
 ## Co zrobić
 
-1. **Wstrzymaj wysyłanie, jeśli masz wątpliwości**
+1. **Zapytaj innym kanałem**
 
-   Zaznacz w ostrzeżeniu **„Wstrzymaj wysyłanie do Zosi do czasu weryfikacji”**. Wiadomości nie wyjdą, dopóki nie potwierdzisz nowego klucza.
+   Zadzwoń albo zapytaj na kanale głosowym, czy zmieniał urządzenie albo logował się od nowa.
 
-2. **Zapytaj innym kanałem**
+2. **Porównaj numer bezpieczeństwa**
 
-   Zadzwoń albo zapytaj na kanale głosowym, czy zmieniał urządzenie albo przeinstalował aplikację.
+   Kliknij **Sprawdź** na pasku albo **Pokaż numer** w panelu bocznym i porównaj numer ze znajomym — na żywo albo przez telefon. Numer otworzysz też z palety poleceń (**Ctrl+K** → **Numer bezpieczeństwa**).
 
-3. **Porównaj nowy numer**
+3. **Potwierdź albo odrzuć**
 
-   Kliknij **„Porównaj numer”** i porównajcie numer bezpieczeństwa na żywo albo zeskanuj kod QR aplikacją na jego telefonie. Jeśli się zgadza, potwierdź **„Zgadza się — zweryfikuj”**.
+   Jeśli numery się zgadzają, wybierz **Zgadza się — zweryfikuj** (albo **Akceptuj nowy klucz**). Jeśli nie — **Nie zgadza się**.
 
-> **Numer się nie zgadza, a znajomy niczego nie zmieniał?** Nie wysyłaj temu kontaktowi nic wrażliwego i wybierz **„Nie zgadza się”**. Daj mu znać innym kanałem, żeby sprawdził swoje urządzenia w Ustawienia › Urządzenia i bezpieczeństwo.
+> **Numer się nie zgadza, a znajomy niczego nie zmieniał?** Nie wysyłaj temu kontaktowi nic wrażliwego. Ktoś może stać pomiędzy Waszymi urządzeniami. Daj znać znajomemu innym kanałem, żeby sprawdził swoje urządzenia w Ustawienia → Urządzenia.
 
-Chcesz lepiej zrozumieć numery bezpieczeństwa? Przeczytaj [Numery bezpieczeństwa: kiedy i po co je porównywać](/pl/blog/numery-bezpieczenstwa-kiedy-porownywac/).
+W kliencie terminalowym numery bezpieczeństwa są pod **Ctrl+S**. Chcesz lepiej je zrozumieć? Przeczytaj [Numery bezpieczeństwa: kiedy i po co je porównywać](/pl/blog/numery-bezpieczenstwa-kiedy-porownywac/).

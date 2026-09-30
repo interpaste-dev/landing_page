@@ -25,9 +25,9 @@ Wiele aplikacji nazywa się prywatnymi. Zanim przeniesiesz serwer, sprawdź czte
 Komunikator działa według tego samego modelu co Discord — serwery, kanały tekstowe, kanały głosowe, role — ale każda treść jest szyfrowana end-to-end:
 
 - **Tekst, pliki i reakcje** szyfrujemy protokołem **MLS (Messaging Layer Security, RFC 9420)** — standardem IETF zaprojektowanym dla dużych szyfrowanych grup. Serwer przechowuje i przekazuje szyfrogramy, których nie umie otworzyć.
-- **Głos i udostępnianie ekranu** szyfrujemy w **SFrame**, więc nawet transmisja 1440p / 60 FPS zostaje między osobami na kanale.
+- **Głos i udostępnianie ekranu** szyfrujemy w **SFrame**, więc obraz z ekranu i kamery zostaje między osobami na kanale.
 - **Klucze powstają na Twoim urządzeniu.** Każdy telefon i komputer ma własne klucze, więc zgubione urządzenie wylogujesz bez wpływu na pozostałe.
-- **Numery bezpieczeństwa i kody QR** pozwalają sprawdzić, że naprawdę rozmawiasz ze znajomym, a aplikacja ostrzega, gdy czyjś klucz się zmieni.
+- **Numery bezpieczeństwa** pozwalają sprawdzić, że naprawdę rozmawiasz ze znajomym, a aplikacja ostrzega, gdy czyjś klucz się zmieni.
 
 Jak działa MLS, tłumaczymy bez żargonu w [poradniku o szyfrowaniu end-to-end i MLS](/pl/blog/czym-jest-szyfrowanie-end-to-end-mls/).
 
@@ -48,10 +48,10 @@ Metadane to najtrudniejsza część każdego komunikatora. Ograniczamy je do teg
 
 Narzędzia do prywatności często są krokiem w tył. Czat dla graczy nie może sobie na to pozwolić, więc klient jest projektowany pod granie:
 
-- **~40 MB RAM**, więc nie zabiera klatek w grze.
-- **Głos z niskim opóźnieniem**: Opus 48 kHz, push-to-talk i redukcja szumów.
-- **Overlay w grze** pokazujący, kto mówi, z szybką odpowiedzią i powiadomieniami bez treści.
-- **Push-to-talk, który nie ucina pierwszych słów** — więcej w [poradniku o push-to-talk](/pl/blog/push-to-talk-bez-ucinania-pierwszych-slow/).
+- **Natywna aplikacja** — interfejs Qt Quick rysowany na GPU, bez silnika przeglądarki w środku.
+- **Kanały głosowe jak na Discordzie**, z redukcją szumów i usuwaniem echa.
+- **Klient terminalowy** dla tych, którzy wolą konsolę — także przez SSH.
+- **Push-to-talk i overlay w grze** są w planach — zobacz, [dlaczego push-to-talk ucina pierwsze słowa](/pl/blog/push-to-talk-bez-ucinania-pierwszych-slow/).
 
 ## Jak przenieść serwer
 
@@ -61,4 +61,4 @@ Zmiana platformy to głównie problem społeczny: każdy musi coś zainstalować
 - Wyślijcie link z zaproszeniem i przy pierwszym spotkaniu na głosowym **porównajcie numery bezpieczeństwa** — to minuta.
 - Zostawcie stary serwer w trybie tylko do odczytu na kilka tygodni, żeby nikt nie stracił ważnej historii.
 
-Komunikator jest darmowy, open source i dostępny na Windows, Linux i Androida, a wersja na iOS jest w przygotowaniu. [Pobierz go](/pl/#download) i sprawdźcie go dziś wieczorem z drużyną.
+Komunikator jest darmowy i dostępny na Windows, macOS i Linux, a aplikacje mobilne są w przygotowaniu. [Pobierz go](/pl/pobierz/) i sprawdźcie go dziś wieczorem z drużyną. Pełne porównanie znajdziesz w [Komunikator czy Discord](/pl/porownanie-z-discordem/).

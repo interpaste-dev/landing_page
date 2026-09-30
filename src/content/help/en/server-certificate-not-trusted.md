@@ -1,27 +1,29 @@
 ---
 title: 'Server certificate is not trusted'
-description: 'Getting “Server certificate is not trusted” when connecting to a self-hosted Komunikator server? Check the address, the certificate and add your own CA file.'
+description: 'Getting “server certificate is not trusted” when connecting to a Komunikator server? Check the gateway address and point the app to the server’s CA file.'
 category: selfhost
 translationKey: cert-not-trusted
-updatedDate: 2026-09-20
-appliesTo: '0.9+'
+updatedDate: 2026-09-30
+appliesTo: '0.1+'
 popular: 5
 ---
 
-This error means the app couldn’t confirm the identity of the server you’re connecting to. It usually happens with **self-hosted servers**.
+This error means the app couldn’t confirm the identity of the server you’re connecting to. It usually happens with **self-hosted servers**, because a fresh server uses a self-signed certificate.
 
-1. **Check the server address**
+The certificate of the default server is built into the app, so there you leave the CA field empty.
 
-   On the login screen, open **Advanced** and look at **Server address**. A typo, a missing port or the wrong domain is the most common cause. The address should match the name on the server’s certificate.
+1. **Check the gateway address**
 
-2. **Check that the certificate is valid**
+   On the login screen, open the advanced options and look at the **gateway address**, for example `wss://example.com:443`. A typo or the wrong port is the most common cause.
 
-   An expired certificate, or one issued for a different domain, is rejected. If you run the server, renew it — a free, automatically renewed certificate (for example from Let’s Encrypt) is the easiest option.
+2. **Point the app to the server’s certificate**
 
-3. **Using your own certificate authority? Add the CA file**
+   Copy the server’s `var/secrets/gate_cert.pem` file to your computer and choose it in **CA certificate (optional)** on the login screen.
 
-   If the server uses a certificate signed by your own CA (common on a home network), choose the CA file in **Advanced › CA certificate (optional)** on the login screen.
+3. **Or use a certificate for a domain**
+
+   If you run the server, you can replace the self-signed certificate with one issued for your domain — then nobody needs to add a CA file.
 
 > **Never ignore this warning on a public network.** An untrusted certificate can mean someone is intercepting the connection. Your messages stay end-to-end encrypted, but you might be talking to the wrong server.
 
-Setting up your own server? The example configuration is on the [Download](/download/#self-hosting) page.
+Setting up your own server? See the [self-hosting guide](/self-hosting/).

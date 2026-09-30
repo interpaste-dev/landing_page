@@ -25,9 +25,9 @@ A lot of apps call themselves private. Before you move your server, check these 
 Komunikator is built around the same mental model as Discord — servers, text channels, voice channels, roles — but every piece of content is end-to-end encrypted:
 
 - **Text, files and reactions** are encrypted with **MLS (Messaging Layer Security, RFC 9420)**, an IETF standard designed for large encrypted groups. The server stores and relays ciphertext it cannot open.
-- **Voice and screen sharing** are encrypted with **SFrame**, so even 1440p / 60 FPS streams stay private between the people in the channel.
+- **Voice and screen sharing** are encrypted with **SFrame**, so screen and camera streams stay private between the people in the channel.
 - **Keys are created on your device.** Every phone and computer you use gets its own keys, so a lost device can be logged out without affecting the others.
-- **Safety numbers and QR codes** let you verify that you are really talking to your friend, and the app warns you when someone’s key changes.
+- **Safety numbers** let you verify that you are really talking to your friend, and the app warns you when someone’s key changes.
 
 You can read how MLS works in plain English in [our guide to end-to-end encryption and MLS](/blog/end-to-end-encryption-mls-explained/).
 
@@ -48,10 +48,10 @@ Metadata is the hard part of every messaging system. We keep it to what is neede
 
 Privacy tools often feel like a downgrade. A gaming chat can’t afford that, so the client is designed around play:
 
-- **~40 MB of RAM**, so it doesn’t steal frames from your game.
-- **Low-latency voice** with Opus at 48 kHz, push-to-talk and noise suppression.
-- **In-game overlay** showing who is talking, with quick replies and content-free notifications.
-- **Push-to-talk that doesn’t clip your first words** — more on that in [our push-to-talk guide](/blog/push-to-talk-first-words/).
+- **A native app** — a GPU-drawn Qt Quick interface with no browser engine inside.
+- **Voice channels like on Discord**, with noise suppression and echo cancellation.
+- **A terminal client** for when you’d rather stay in the console — even over SSH.
+- **Push-to-talk and an in-game overlay** are on the roadmap — see [why push-to-talk clips your first words](/blog/push-to-talk-first-words/).
 
 ## Moving your server over
 
@@ -61,4 +61,4 @@ Switching platforms is mostly a social problem: everyone has to install somethin
 - Share an invite link and ask everyone to **verify each other’s safety numbers** the first time you meet in voice — it takes a minute.
 - Keep the old server read-only for a few weeks so nobody loses history they care about.
 
-Komunikator is free, open source and available for Windows, Linux and Android, with iOS in development. [Download it](/#download) and try it with your squad tonight.
+Komunikator is free and available for Windows, macOS and Linux, with mobile apps in development. [Download it](/download/) and try it with your squad tonight. Want the full picture? See [Komunikator vs Discord](/vs-discord/).

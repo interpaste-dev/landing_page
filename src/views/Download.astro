@@ -14,11 +14,11 @@ const c = downloadCopy[lang];
 const site = Astro.site!;
 const v = SITE.version;
 
-const icons: Record<string, IconName> = { windows: 'monitor', linux: 'chip', android: 'phone', macos: 'apple', ios: 'phone' };
-const files: Record<string, string | undefined> = { linux: LINKS.files.linux, android: LINKS.files.android };
+const icons: Record<string, IconName> = { windows: 'monitor', linux: 'chip', macos: 'apple', tui: 'code', mobile: 'phone' };
+const links: Record<string, string | undefined> = { linux: LINKS.files.linux, macos: LINKS.files.macos, tui: route(lang, 'tui') };
 // Dane dla skryptu wykrywającego system (podmienia kartę „Wykryliśmy Twój system”).
 const detect = Object.fromEntries(
-  (['windows', 'linux', 'android'] as const).map((k) => [k, { ...c.platforms[k], href: LINKS.files[k] }]),
+  (['windows', 'linux', 'macos'] as const).map((k) => [k, { ...c.platforms[k], href: LINKS.files[k] }]),
 );
 
 const jsonLd = [
@@ -68,7 +68,6 @@ const jsonLd = [
           <a href="#checksums">{c.checksum}</a>
         </div>
         <div class="detect-links">
-          <a href={LINKS.files.windowsPortable}>{c.portable}</a>
           <a href={LINKS.files.olderVersions}>{c.older}</a>
           <a href={route(lang, 'changelog')}>{c.changelog}</a>
         </div>
@@ -90,8 +89,8 @@ const jsonLd = [
               <span class="meta">{o.meta}</span>
             </div>
             {o.cta ? (
-              <Button href={files[o.key]} variant="muted" block aria-label={`${o.cta} — ${o.name}`}>
-                <Icon name="download" stroke={2} />
+              <Button href={links[o.key]} variant="muted" block aria-label={`${o.cta} — ${o.name}`}>
+                <Icon name={o.key === 'tui' ? 'chevron' : 'download'} stroke={2} />
                 {o.cta}
               </Button>
             ) : (
@@ -110,10 +109,10 @@ const jsonLd = [
     </div>
     <div class="codes">
       <pre><code><span class="cm">{c.verify.cmdComment}</span>
-Get-FileHash .\Komunikator-{v}.exe -Algorithm SHA256</code></pre>
+Get-FileHash .\Komunikator.exe -Algorithm SHA256</code></pre>
       <pre><code><span class="cm">{c.verify.expected}</span>
-Komunikator-{v}.exe       {c.verify.placeholder}
-Komunikator-{v}.AppImage  {c.verify.placeholder}</code></pre>
+Komunikator.exe  {c.verify.placeholder}
+komunikator      {c.verify.placeholder}</code></pre>
     </div>
   </section>
 
@@ -144,14 +143,12 @@ Komunikator-{v}.AppImage  {c.verify.placeholder}</code></pre>
         <span class="o-ico accent"><Icon name="server" size={24} /></span>
         <h2 class="h2 small-h">{c.self.title}</h2>
         <p>{c.self.text}</p>
-        <a href={LINKS.selfHostGuide}>{c.self.guide}</a>
+        <a href={route(lang, 'selfhost')}>{c.self.guide}</a>
       </div>
       <pre><code><span class="cm">{c.self.comment}</span>
-<span class="k">services:</span>
-  <span class="k">komunikator:</span>
-    image: {c.self.image}:{v}
-    ports: ["443:443"]
-    volumes: ["./data:/var/lib/komunikator"]</code></pre>
+./scripts/stack.sh up       <span class="cm"># .env, key, build, start</span>
+./scripts/stack.sh status   <span class="cm"># {c.self.status}</span>
+./scripts/stack.sh logs     <span class="cm"># {c.self.logs}</span></code></pre>
     </div>
   </section>
 </Base>
@@ -162,7 +159,7 @@ Komunikator-{v}.AppImage  {c.verify.placeholder}</code></pre>
     var el = document.getElementById('detect');
     if (!el) return;
     var ua = navigator.userAgent;
-    var key = /Android/i.test(ua) ? 'android' : /Linux|X11/.test(ua) ? 'linux' : null;
+    var key = /Android|iPhone|iPad/i.test(ua) ? null : /Mac/.test(ua) ? 'macos' : /Linux|X11/.test(ua) ? 'linux' : null;
     if (!key) return;
     var p = JSON.parse(el.dataset.platforms)[key];
     el.querySelector('[data-os]').textContent = p.os;

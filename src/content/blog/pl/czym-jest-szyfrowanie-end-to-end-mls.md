@@ -65,4 +65,4 @@ Szyfrowanie chroni Cię tylko wtedy, gdy rozmawiasz z właściwą osobą. Do teg
 - MLS (RFC 9420) sprawia, że działa to w praktyce w dużych, zmieniających się grupach.
 - Serwer przekazuje szyfrogramy; nie przeczyta wiadomości ani nie usłyszy rozmów głosowych.
 
-Chcesz zobaczyć to w działaniu? Komunikator to [prywatna alternatywa dla Discorda](/pl/blog/prywatna-alternatywa-dla-discorda/) oparta na MLS — za darmo i open source.
+Chcesz zobaczyć to w działaniu? Komunikator to [prywatna alternatywa dla Discorda](/pl/blog/prywatna-alternatywa-dla-discorda/) oparta na MLS — i jest za darmo.

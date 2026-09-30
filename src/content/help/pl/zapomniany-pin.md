@@ -1,34 +1,31 @@
 ---
 title: 'Zapomniałem PIN-u — co teraz?'
-description: 'PIN w Komunikatorze odblokowuje lokalną bazę kluczy i nigdy nie opuszcza urządzenia. Zobacz, co zrobić, gdy go zapomnisz, i co się dzieje po zbyt wielu próbach.'
+description: 'PIN w Komunikatorze blokuje aplikację na tym komputerze i nigdy go nie opuszcza. Zobacz, co się dzieje po błędnych próbach i jak wrócić bez PIN-u.'
 category: account
 translationKey: forgot-pin
-updatedDate: 2026-09-20
-appliesTo: '0.9+'
+updatedDate: 2026-09-30
+appliesTo: '0.1+'
 popular: 2
 ---
 
-PIN odszyfrowuje **lokalną bazę kluczy** na tym urządzeniu. Nie jest wysyłany na serwer, więc nie możemy go zresetować ani podpowiedzieć.
+6-cyfrowy PIN blokuje Komunikator na **tym komputerze**. Nie jest wysyłany na serwer, więc nie możemy go zresetować ani podpowiedzieć.
 
-## Najpierw spróbuj tego
+## Błędne próby
 
-1. **Użyj Windows Hello**
-
-   Jeśli masz je włączone, na ekranie odblokowania wybierz „Użyj Windows Hello” zamiast wpisywać PIN.
-
-2. **Sprawdź układ klawiatury i Num Lock**
-
-   Inny układ klawiatury albo wyłączony Num Lock to najczęstszy powód, dla którego poprawny PIN jest odrzucany.
+Po **5 błędnych próbach** aplikacja każe odczekać **30 sekund**, zanim spróbujesz znowu. Nic nie zostaje usunięte.
 
 ## Jeśli naprawdę nie pamiętasz
 
-Na ekranie odblokowania wybierz **„Nie pamiętam PIN-u”**. Aplikacja wyczyści klucze zapisane na tym urządzeniu, a potem możesz:
+1. **Wybierz „Nie pamiętam PIN-u”**
 
-- **przywrócić je z kopii zapasowej** — zobacz [Jak przywrócić konto z kopii zapasowej](/pl/pomoc/przywracanie-konta-z-kopii/), albo
-- **zalogować się na urządzeniu, które nadal działa**, i zrobić tam nową kopię.
+   Link jest na ekranie odblokowania.
 
-> **Po 5 błędnych próbach** lokalne klucze zostaną wyczyszczone automatycznie. To chroni rozmowy, jeśli ktoś inny próbuje zgadnąć Twój PIN. Pozostałe urządzenia nie są objęte tą zmianą.
+2. **Wyloguj się i zaloguj ponownie hasłem**
+
+   Wylogowanie usuwa konto i historię zapisaną na tym komputerze. Rozmowy trwają dalej — nowe wiadomości dojdą po ponownym zalogowaniu.
+
+> **Pozostałe urządzenia nie są objęte tą zmianą.** Mają swoją historię i z nich dodasz ten komputer z powrotem do rozmów.
 
 ## Dlaczego nie możecie go zresetować?
 
-Bo PIN nigdy nie opuszcza Twojego komputera. Dzięki temu baza kluczy jest bezpieczna, nawet gdy ktoś ukradnie laptopa — i właśnie dlatego jedyną drogą powrotu jest kopia zapasowa.
+Bo PIN nigdy nie opuszcza Twojego komputera. To chroni aplikację, gdy ktoś dorwie Twojego laptopa — i dlatego bez PIN-u jedyną drogą powrotu jest hasło.

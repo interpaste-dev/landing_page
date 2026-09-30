@@ -36,6 +36,14 @@ npm run check     # typy i diagnostyka Astro
 | `/changelog/`              | `/pl/nowosci/`                   | lista zmian + RSS                            |
 | `/blog/`, `/blog/<slug>/`  | `/pl/blog/`, `/pl/blog/<slug>/`  | blog (4 wpisy w każdym języku) + RSS         |
 | `/help/`, `/help/<slug>/`  | `/pl/pomoc/`, `/pl/pomoc/<slug>/`| centrum pomocy z wyszukiwarką (6 artykułów)  |
+| `/terminal-client/`        | `/pl/klient-terminalowy/`        | klient TUI (SEO)                             |
+| `/self-hosting/`           | `/pl/wlasny-serwer/`             | własny serwer w Dockerze (SEO)               |
+| `/vs-discord/`             | `/pl/porownanie-z-discordem/`    | porównanie z Discordem (SEO)                 |
+| `/privacy/`, `/terms/`     | `/pl/prywatnosc/`, `/pl/regulamin/` | szkice polityki prywatności i regulaminu  |
+
+Strony SEO i prawne są w stopce; główne menu zostaje krótkie. Treść stron SEO i prawnych to Markdown w `src/content/pages/<język>/<klucz trasy>.md`, a ich adresy biorą się z `src/i18n/routes.ts`.
+
+Fakty na stronie (platformy, funkcje, limity, tryby serwera, skróty) są sprawdzone z kodem `komunikator-client`, `komunikator-tui` i `komunikator-server`. Funkcji, których jeszcze nie ma (aplikacje mobilne, overlay w grze, globalny push-to-talk, kopie w aplikacji desktopowej), strona opisuje jako planowane.
 
 ## Architektura
 
@@ -137,7 +145,8 @@ src/
 │  └─ routes.ts         adresy podstron w obu językach
 ├─ content/
 │  ├─ blog/en|pl/       wpisy; translationKey łączy tłumaczenia
-│  └─ help/en|pl/       artykuły pomocy; lista numerowana = kroki, cytat = ostrzeżenie
+│  ├─ help/en|pl/       artykuły pomocy; lista numerowana = kroki, cytat = ostrzeżenie
+│  └─ pages/en|pl/      strony SEO i prawne (klucz trasy = nazwa pliku)
 ├─ views/               widoki wspólne dla obu języków
 ├─ pages/  pages/pl/    routing; tylko wywołuje widoki
 ├─ components/          sekcje strony i elementy wspólne
@@ -174,7 +183,8 @@ Workflow `.github/workflows/pages.yml` buduje stronę po każdym pushu na `main`
 ## Do uzupełnienia
 
 - domena — `SITE_URL` przy buildzie (domyślnie `https://interpaste.dev`); od niej zależą canonical, hreflang, OG, RSS i sitemap
-- pliki do pobrania, instrukcja self-hostingu, regulamin, prywatność, status — `LINKS` w `src/site.ts`
-- e-maile `support@` i `security@`, rozmiary plików, sumy SHA-256, ID klucza podpisu, obraz serwera
-- wartości oznaczone `[TBD]` / `[DO USTALENIA]` (FAQ, audyt, pomiary CPU i opóźnienia, tryby serwera)
-- angielskie zrzuty aplikacji w `src/assets/` dla wersji EN
+- linki do plików (Windows, Linux, macOS, TUI) i status serwera — `LINKS` w `src/site.ts`
+- e-maile `support@` i `security@`, sumy SHA-256, publiczne repozytorium / obraz serwera
+- dane administratora, retencja logów i prawo właściwe w `privacy` i `terms` — **szkice do przejrzenia z prawnikiem**
+- wartości oznaczone `[TBD]` / `[DO USTALENIA]` (FAQ, audyt, pomiary RAM/CPU/opóźnienia, wersja macOS)
+- zrzuty aplikacji mobilnej na stronie głównej to makiety z projektu (aplikacji mobilnej jeszcze nie ma)

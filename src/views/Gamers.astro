@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import Button from '../components/Button.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Icon, { type IconName } from '../components/Icon.astro';
-import overlay from '../assets/app-overlay.png';
+import overlay from '../assets/app-desktop.png';
 import { LOCALE, getLang, useT } from '../i18n/ui';
 import { ROUTES, route } from '../i18n/routes';
 import { gamersCopy } from '../i18n/pages/gamers';
@@ -15,7 +15,7 @@ const t = useT(lang);
 const c = gamersCopy[lang];
 const site = Astro.site!;
 const download = route(lang, 'download');
-const faq = c.faq.map((f) => ({ ...f, a: f.a.replace('{download}', download) }));
+const faq = c.faq.map((f) => ({ ...f, a: f.a.replace('{selfhost}', route(lang, 'selfhost')) }));
 
 // Zrzut overlayu jest w pierwszym ekranie na desktopie — ładujemy go od razu, w kilku rozmiarach.
 const widths = [480, 720, 1080];
@@ -44,7 +44,7 @@ const jsonLd = [
         <p class="lead">{c.lead}</p>
         <div class="ctas">
           <Button href={download} size="lg"><Icon name="download" stroke={2} />{c.cta}</Button>
-          <Button href={download} size="lg" variant="outline">{c.ctaServer}</Button>
+          <Button href={route(lang, 'selfhost')} size="lg" variant="outline">{c.ctaServer}</Button>
         </div>
       </div>
       <div class="shot">

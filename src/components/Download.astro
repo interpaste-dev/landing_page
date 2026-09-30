@@ -12,8 +12,8 @@ const p = t.platforms;
 const platforms: { name: string; meta: string; icon: IconName; href?: string; cta?: string; primary?: boolean }[] = [
   { name: 'Windows', meta: p.windows.meta, icon: 'monitor', href: download, cta: p.windows.cta, primary: true },
   { name: 'Linux', meta: p.linux.meta, icon: 'chip', href: download, cta: p.linux.cta },
-  { name: 'Android', meta: p.android.meta, icon: 'phone', href: download, cta: p.android.cta },
-  { name: 'iOS', meta: p.ios.meta, icon: 'phone' },
+  { name: 'macOS', meta: p.macos.meta, icon: 'apple', href: download, cta: p.macos.cta },
+  { name: 'Android · iOS', meta: p.mobile.meta, icon: 'phone' },
 ];
 ---
 

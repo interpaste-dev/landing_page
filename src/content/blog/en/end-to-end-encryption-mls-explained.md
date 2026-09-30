@@ -65,4 +65,4 @@ Encryption only protects you if you are talking to the right person. That is wha
 - MLS (RFC 9420) makes that practical for large, changing groups.
 - The server relays ciphertext; it can’t read your messages or hear your voice calls.
 
-Want to see it in action? Komunikator is a [private Discord alternative](/blog/private-discord-alternative/) built on MLS — free and open source.
+Want to see it in action? Komunikator is a [private Discord alternative](/blog/private-discord-alternative/) built on MLS — and it’s free.

@@ -27,4 +27,8 @@ export default defineConfig({
   image: {
     layout: 'constrained',
   },
+  // Motyw bloków kodu z kontrastem WCAG AA na ciemnym tle.
+  markdown: {
+    shikiConfig: { theme: 'github-dark-high-contrast' },
+  },
 });

@@ -1,27 +1,29 @@
 ---
 title: 'Certyfikat serwera nie jest zaufany'
-description: 'Widzisz „Certyfikat serwera nie jest zaufany” przy łączeniu z własnym serwerem Komunikatora? Sprawdź adres i certyfikat albo wskaż własny plik CA.'
+description: 'Widzisz „certyfikat serwera nie jest zaufany” przy łączeniu z serwerem Komunikatora? Sprawdź adres bramy i wskaż aplikacji plik CA serwera.'
 category: selfhost
 translationKey: cert-not-trusted
-updatedDate: 2026-09-20
-appliesTo: '0.9+'
+updatedDate: 2026-09-30
+appliesTo: '0.1+'
 popular: 5
 ---
 
-Ten błąd oznacza, że aplikacja nie mogła potwierdzić tożsamości serwera, z którym się łączysz. Najczęściej zdarza się przy **własnych serwerach**.
+Ten błąd oznacza, że aplikacja nie mogła potwierdzić tożsamości serwera, z którym się łączysz. Najczęściej zdarza się przy **własnych serwerach**, bo świeżo postawiony serwer ma certyfikat samopodpisany.
 
-1. **Sprawdź adres serwera**
+Certyfikat domyślnego serwera jest wbudowany w aplikację, więc tam pole CA zostawiasz puste.
 
-   Na ekranie logowania otwórz **Zaawansowane** i sprawdź **Adres serwera**. Literówka, brak portu albo zła domena to najczęstsze przyczyny. Adres powinien zgadzać się z nazwą w certyfikacie serwera.
+1. **Sprawdź adres bramy**
 
-2. **Sprawdź, czy certyfikat jest ważny**
+   Na ekranie logowania otwórz opcje zaawansowane i sprawdź **adres bramy**, np. `wss://example.com:443`. Literówka albo zły port to najczęstsze przyczyny.
 
-   Certyfikat, który wygasł albo został wystawiony dla innej domeny, zostanie odrzucony. Jeśli prowadzisz serwer, odnów go — najprościej użyć darmowego, automatycznie odnawianego certyfikatu (np. z Let’s Encrypt).
+2. **Wskaż aplikacji certyfikat serwera**
 
-3. **Masz własny urząd certyfikacji? Wskaż plik CA**
+   Skopiuj z serwera plik `var/secrets/gate_cert.pem` na swój komputer i wybierz go w polu **certyfikat CA (opcjonalnie)** na ekranie logowania.
 
-   Jeśli serwer używa certyfikatu podpisanego przez Twoje własne CA (częste w sieci domowej), wybierz plik CA w **Zaawansowane › Certyfikat CA (opcjonalnie)** na ekranie logowania.
+3. **Albo użyj certyfikatu dla domeny**
+
+   Jeśli prowadzisz serwer, możesz podmienić certyfikat samopodpisany na wystawiony dla Twojej domeny — wtedy nikt nie musi dodawać pliku CA.
 
 > **Nie ignoruj tego ostrzeżenia w publicznej sieci.** Niezaufany certyfikat może oznaczać, że ktoś przechwytuje połączenie. Wiadomości dalej są szyfrowane end-to-end, ale możesz rozmawiać z niewłaściwym serwerem.
 
-Stawiasz własny serwer? Przykładowa konfiguracja jest na stronie [Pobierz](/pl/pobierz/#self-hosting).
+Stawiasz własny serwer? Zobacz [instrukcję własnego serwera](/pl/wlasny-serwer/).

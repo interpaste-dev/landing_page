@@ -4,7 +4,7 @@ import { SECTION } from '../site';
 import { getLang, useT } from '../i18n/ui';
 
 const t = useT(getLang(Astro.currentLocale)).features;
-const icons: IconName[] = ['lock', 'speaker', 'bolt', 'gamepad', 'palette', 'shield'];
+const icons: IconName[] = ['lock', 'speaker', 'bolt', 'code', 'palette', 'shield'];
 const features = t.items.map((f, i) => ({ ...f, icon: icons[i] }));
 
 

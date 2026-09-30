@@ -38,7 +38,7 @@ const download = route(lang, 'download');
     <div class="ctas">
       <Button href={download} size="lg" class="cta-desktop"><Icon name="download" stroke={2} />{t.ctaWindows}</Button>
       <Button href={download} size="lg" class="cta-mobile"><Icon name="download" stroke={2} />{t.ctaAndroid}</Button>
-      <Button href={download} size="lg" variant="outline">{t.ctaWeb}</Button>
+      <Button href={route(lang, 'security')} size="lg" variant="outline">{t.ctaWeb}</Button>
     </div>
     <ul class="perks">
       {

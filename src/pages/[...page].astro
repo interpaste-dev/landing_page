@@ -1,0 +1,21 @@
+---
+// Strony treściowe (własny serwer, klient terminalowy, porównanie, prywatność, regulamin) w obu językach.
+// Adres każdej strony bierze się z ROUTES, więc polskie strony mają polskie slugi.
+import type { GetStaticPaths } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import ContentPage from '../views/ContentPage.astro';
+import { ROUTES } from '../i18n/routes';
+import type { Lang } from '../i18n/ui';
+
+export const getStaticPaths = (async () => {
+  const pages = await getCollection('pages');
+  return pages.map((page) => {
+    const lang = page.id.split('/')[0] as Lang;
+    return { params: { page: ROUTES[page.data.route][lang].replace(/^\/|\/$/g, '') }, props: { page } };
+  });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props as { page: CollectionEntry<'pages'> };
+---
+
+<ContentPage page={page} />

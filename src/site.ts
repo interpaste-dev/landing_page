@@ -3,7 +3,7 @@ export const SITE = {
   name: 'Komunikator',
   themeColor: '#121111',
   ogImage: '/og.png',
-  version: '0.9.2',
+  version: '0.1.0',
 };
 
 // TODO: podmienić na prawdziwe adresy, gdy będą gotowe.
@@ -11,14 +11,11 @@ export const LINKS = {
   source: 'https://github.com/interpaste-dev',
   files: {
     windows: '#',
-    windowsPortable: '#',
     linux: '#',
-    android: '#',
+    macos: '#',
+    tui: '#',
     olderVersions: '#',
   },
-  selfHostGuide: '#',
-  terms: '#',
-  privacy: '#',
   status: '#',
   supportEmail: 'support@[DOMENA]',
   securityEmail: 'security@[DOMENA]',

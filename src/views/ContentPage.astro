@@ -1,0 +1,252 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import { SITE } from '../site';
+import { LOCALE, formatDate, getLang, useT } from '../i18n/ui';
+import { ROUTES, route } from '../i18n/routes';
+import { breadcrumbLd, publisher } from '../lib/seo';
+
+interface Props {
+  page: CollectionEntry<'pages'>;
+}
+
+const { page } = Astro.props;
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang);
+const { Content } = await render(page);
+const { title, description, heading, eyebrow, lead, updatedDate, route: key, schema, cta } = page.data;
+const site = Astro.site!;
+const url = new URL(route(lang, key), site).href;
+const updated = lang === 'pl' ? 'Zaktualizowano' : 'Updated';
+
+const jsonLd = [
+  schema === 'app'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: `${SITE.name} — ${heading}`,
+        description,
+        url,
+        applicationCategory: 'CommunicationApplication',
+        operatingSystem: 'Windows, macOS, Linux',
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        inLanguage: LOCALE[lang].intl,
+      }
+    : {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: title,
+        description,
+        url,
+        inLanguage: LOCALE[lang].intl,
+        dateModified: updatedDate.toISOString(),
+        publisher: publisher(site),
+      },
+  breadcrumbLd(site, [
+    { name: t.a11y.homeCrumb, path: route(lang, 'home') },
+    { name: heading, path: route(lang, key) },
+  ]),
+];
+---
+
+<Base title={title} description={description} alternates={ROUTES[key]} jsonLd={jsonLd}>
+  <article class="container page">
+    <Breadcrumbs items={[{ label: t.a11y.homeCrumb, href: route(lang, 'home') }, { label: heading }]} />
+    <header>
+      <span class="eyebrow">{eyebrow}</span>
+      <h1>{heading}</h1>
+      <p class="lede">{lead}</p>
+      <p class="meta">{updated} <time datetime={updatedDate.toISOString().slice(0, 10)}>{formatDate(lang, updatedDate)}</time></p>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+    {
+      cta && (
+        <aside class="cta">
+          <h2>{t.blog.ctaTitle}</h2>
+          <p>{t.blog.ctaText}</p>
+          <Button href={route(lang, 'download')} size="lg">
+            <Icon name="download" stroke={2} />
+            {t.blog.ctaButton}
+          </Button>
+        </aside>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  .page {
+    max-width: calc(820px + 2 * var(--gutter));
+    padding-top: 48px;
+    padding-bottom: 112px;
+  }
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 28px 0 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  h1 {
+    margin: 0;
+    font-size: 48px;
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+  }
+  .lede {
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--text-2);
+  }
+  .meta {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--text-3);
+  }
+  .prose {
+    padding-top: 8px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #ded7cd;
+  }
+  .prose :global(h2) {
+    margin: 44px 0 10px;
+    font-size: 26px;
+    line-height: 1.2;
+    color: var(--text);
+  }
+  .prose :global(p),
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 14px 0;
+  }
+  .prose :global(li) {
+    margin: 8px 0;
+  }
+  .prose :global(li::marker) {
+    color: var(--accent);
+  }
+  .prose :global(strong) {
+    color: var(--text);
+  }
+  .prose :global(a) {
+    color: var(--accent);
+    text-underline-offset: 3px;
+  }
+  .prose :global(code) {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: var(--surface-2);
+    color: var(--text);
+  }
+  .prose :global(pre) {
+    margin: 18px 0;
+    padding: 16px 18px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--bg-deep) !important;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .prose :global(pre code) {
+    padding: 0;
+    background: none;
+  }
+  .prose :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 24px 0;
+    border-radius: 14px;
+    border: 1px solid var(--line-strong);
+  }
+  .prose :global(blockquote) {
+    margin: 24px 0;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1px solid rgb(230 169 90 / 0.35);
+    background: rgb(230 169 90 / 0.08);
+    font-size: 15.5px;
+  }
+  .prose :global(blockquote p) {
+    margin: 0;
+  }
+  .prose :global(table) {
+    display: block;
+    width: 100%;
+    margin: 20px 0;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  .prose :global(th),
+  .prose :global(td) {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  .prose :global(th) {
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    white-space: nowrap;
+  }
+  .cta {
+    margin-top: 48px;
+    padding: 30px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--accent-line);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .cta h2 {
+    margin: 0;
+    font-size: 24px;
+  }
+  .cta p {
+    margin: 0 0 6px;
+    color: var(--text-2);
+  }
+  @media (max-width: 720px) {
+    .page {
+      padding-top: 24px;
+      padding-bottom: 64px;
+    }
+    h1 {
+      font-size: 34px;
+    }
+    .lede {
+      font-size: 17px;
+    }
+    .prose {
+      font-size: 16px;
+    }
+    .prose :global(h2) {
+      font-size: 22px;
+    }
+    .prose :global(pre) {
+      font-size: 12.5px;
+    }
+    .cta {
+      padding: 22px;
+    }
+    .cta :global(.btn) {
+      width: 100%;
+    }
+  }
+</style>

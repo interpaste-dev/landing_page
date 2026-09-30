@@ -32,4 +32,21 @@ const help = defineCollection({
   }),
 });
 
-export const collections = { blog, help };
+// Strony treściowe (SEO, prawne): src/content/pages/<język>/<klucz trasy>.md — adres bierze się z src/i18n/routes.ts.
+const pages = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/pages' }),
+  schema: z.object({
+    title: z.string().max(70),
+    description: z.string().min(70).max(170),
+    heading: z.string(),
+    eyebrow: z.string(),
+    lead: z.string(),
+    updatedDate: z.coerce.date(),
+    route: z.enum(['selfhost', 'tui', 'vsDiscord', 'privacy', 'terms']),
+    /** app = strona produktu (JSON-LD SoftwareApplication), page = zwykła strona. */
+    schema: z.enum(['app', 'page']).default('page'),
+    cta: z.boolean().default(true),
+  }),
+});
+
+export const collections = { blog, help, pages };

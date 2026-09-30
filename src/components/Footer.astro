@@ -12,6 +12,7 @@ const columns = [
     links: [
       { label: t.nav.features, href: homeAnchor(lang, SECTION.features) },
       { label: t.nav.gamers, href: route(lang, 'gamers') },
+      { label: t.footer.tui, href: route(lang, 'tui') },
       { label: t.nav.download, href: route(lang, 'download') },
       { label: t.nav.changelog, href: route(lang, 'changelog') },
     ],
@@ -22,14 +23,15 @@ const columns = [
       { label: t.nav.blog, href: route(lang, 'blog') },
       { label: t.footer.helpCenter, href: route(lang, 'help') },
       { label: t.nav.security, href: route(lang, 'security') },
-      { label: t.footer.source, href: LINKS.source },
+      { label: t.footer.selfhost, href: route(lang, 'selfhost') },
+      { label: t.footer.vsDiscord, href: route(lang, 'vsDiscord') },
     ],
   },
   {
     title: t.footer.info,
     links: [
-      { label: t.footer.terms, href: LINKS.terms },
-      { label: t.footer.privacy, href: LINKS.privacy },
+      { label: t.footer.terms, href: route(lang, 'terms') },
+      { label: t.footer.privacy, href: route(lang, 'privacy') },
       { label: t.footer.contact, href: `${route(lang, 'help')}#contact` },
       { label: t.footer.status, href: LINKS.status },
     ],

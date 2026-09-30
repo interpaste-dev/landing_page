@@ -1,13 +1,14 @@
 ---
-title: 'Push-to-talk, który nie ucina pierwszych słów'
-description: 'Dlaczego push-to-talk ucina początek zdania, jak naprawia to bufor przed naciśnięciem klawisza i jak ustawić push-to-talk pod czyste callouty w grach rankingowych.'
+title: 'Dlaczego push-to-talk ucina pierwsze słowa'
+description: 'Dlaczego push-to-talk ucina początek zdania, jak naprawia to bufor przed naciśnięciem klawisza i jak już dziś mieć czyste callouty w grach rankingowych.'
 pubDate: 2026-09-08
+updatedDate: 2026-09-30
 category: gaming
 translationKey: push-to-talk
 keywords: ['push to talk ucina pierwsze słowo', 'ustawienia push to talk', 'czat głosowy dla graczy', 'komunikator głosowy do gier', 'niskie opóźnienie głosu']
 ---
 
-Wciskasz klawisz push-to-talk, krzyczysz „**jeden** na B!” — a drużyna słyszy „…na B”. Najważniejsze słowo przepadło. To jedna z najczęstszych skarg na czat głosowy w grach rankingowych i to nie Twoja wina.
+Wciskasz klawisz push-to-talk, krzyczysz „**jeden** na B!” — a drużyna słyszy „…na B”. Najważniejsze słowo przepadło. To jedna z najczęstszych skarg na czat głosowy w grach rankingowych i zwykle to nie Twoja wina.
 
 ## Dlaczego push-to-talk ucina pierwsze słowo
 
@@ -21,28 +22,26 @@ Każdy krok to kilka milisekund. Do tego większość ludzi **zaczyna mówić w 
 
 ## Rozwiązanie: bufor przed naciśnięciem
 
-Komunikator trzyma **krótki, ciągle nadpisywany bufor dźwięku z mikrofonu**, gdy push-to-talk nie jest wciśnięty. Ten bufor nigdzie nie jest wysyłany — po prostu leży w pamięci i jest na bieżąco nadpisywany.
+Standardowym rozwiązaniem jest **krótki, ciągle nadpisywany bufor dźwięku z mikrofonu**, trzymany, gdy push-to-talk nie jest wciśnięty. Nigdzie nie jest wysyłany — leży w pamięci i jest na bieżąco nadpisywany. Po wciśnięciu klawisza aplikacja najpierw wysyła bufor, a potem nadaje na żywo, więc drużyna słyszy całe zdanie.
 
-Gdy wciskasz klawisz, klient najpierw wysyła zawartość bufora, a potem dalej nadaje na żywo. Drużyna słyszy całe zdanie, łącznie ze słowem, które zacząłeś mówić ułamek sekundy za wcześnie.
+Dobra implementacja trzyma bufor lokalnie, szyfruje go jak resztę strumienia i niemal od razu wraca do czasu rzeczywistego.
 
-Kilka ważnych szczegółów:
+## Jak to wygląda w Komunikatorze
 
-- **Bufor zostaje lokalnie.** Nic nie jest wysyłane, dopóki nie wciśniesz klawisza, więc push-to-talk dalej znaczy push-to-talk.
-- **Jest szyfrowany jak wszystko inne.** Po wysłaniu dźwięk z bufora idzie tym samym szyfrowanym end-to-end strumieniem głosu.
-- **Prawie nie dodaje opóźnienia.** Buforowany dźwięk leci krótką paczką, a strumień niemal od razu wraca do czasu rzeczywistego.
+Chcemy, żeby push-to-talk w Komunikatorze działał właśnie tak. Dziś:
 
-## Jak ustawić push-to-talk do gry rankingowej
+- **Aplikacja na komputer** nie ma jeszcze push-to-talk. Globalny klawisz z buforem przed naciśnięciem jest w planach. Do tego czasu wyciszasz się **Ctrl+Shift+M** albo przyciskiem mikrofonu w panelu głosu.
+- **Klient terminalowy** ma push-to-talk jako klawisz przełącznika (domyślnie **F12**), gdy jego okno jest aktywne.
 
-Czyste callouty to głównie nawyki. Nasze rekomendacje:
+Szczegóły są w artykule pomocy [Push-to-talk i wyciszanie w trakcie gry](/pl/pomoc/push-to-talk-i-wyciszanie/).
 
-- **Użyj bocznego przycisku myszy albo klawisza, którego nie używasz w grze.** Unikaj klawiszy obok ruchu i umiejętności.
-- **Włącz redukcję szumów**, jeśli grasz na mechanicznej klawiaturze albo masz obok wentylator.
-- **Zostaw bufor przed naciśnięciem włączony.** Nic nie kosztuje, a ratuje najważniejsze callouty.
-- **Ustaw krótkie opóźnienie zwolnienia, jeśli masz taką opcję.** Bramka otwarta chwilę po puszczeniu klawisza chroni też *ostatnie* słowo.
-- **Raz sprawdź poziom wejścia.** Powiedz zdanie normalnym głosem w teście mikrofonu w ustawieniach i upewnij się, że nie wchodzi w czerwone.
+## Czyste callouty już dziś
 
-## Dlaczego lekki klient ma znaczenie dla głosu
+Czyste callouty to głównie nawyki:
 
-Czat głosowy konkuruje z grą o procesor. Ciężki klient może powodować trzaski w dźwięku i spadki klatek w najgorszym momencie. Komunikator zużywa około **40 MB RAM**, koduje dźwięk w Opus 48 kHz i ma overlay w grze, który pokazuje, kto mówi, bez wychodzenia z gry.
+- **Ustaw push-to-talk na boczny przycisk myszy albo klawisz, którego nie używasz w grze.** Unikaj klawiszy obok ruchu i umiejętności.
+- **Włącz redukcję szumów**, jeśli grasz na mechanicznej klawiaturze albo masz obok wentylator. W Komunikatorze działa lokalnie, przed szyfrowaniem.
+- **Odczekaj ułamek sekundy** po wciśnięciu klawisza, dopóki aplikacja nie ma bufora przed naciśnięciem.
+- **Raz sprawdź poziom wejścia.** Powiedz zdanie normalnym głosem w teście mikrofonu i upewnij się, że nie przesterowuje.
 
-Czyste callouty wygrywają rundy. Jeśli obecna aplikacja zjada Twoje komunikaty, [pobierz Komunikator](/pl/#download) i sprawdź go w następnym meczu — jest darmowy, open source i jest [prywatną alternatywą dla Discorda](/pl/blog/prywatna-alternatywa-dla-discorda/) z szyfrowanym głosem.
+Komunikator to [prywatna alternatywa dla Discorda](/pl/blog/prywatna-alternatywa-dla-discorda/) z szyfrowanym głosem — [pobierz go](/pl/pobierz/) i sprawdźcie z drużyną.

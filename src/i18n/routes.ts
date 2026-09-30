@@ -10,6 +10,11 @@ export const ROUTES = {
   changelog: { en: '/changelog/', pl: '/pl/nowosci/' },
   blog: { en: '/blog/', pl: '/pl/blog/' },
   help: { en: '/help/', pl: '/pl/pomoc/' },
+  selfhost: { en: '/self-hosting/', pl: '/pl/wlasny-serwer/' },
+  tui: { en: '/terminal-client/', pl: '/pl/klient-terminalowy/' },
+  vsDiscord: { en: '/vs-discord/', pl: '/pl/porownanie-z-discordem/' },
+  privacy: { en: '/privacy/', pl: '/pl/prywatnosc/' },
+  terms: { en: '/terms/', pl: '/pl/regulamin/' },
 } as const satisfies Record<string, Record<Lang, string>>;
 
 export type RouteKey = keyof typeof ROUTES;

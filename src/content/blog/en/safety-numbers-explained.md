@@ -11,7 +11,7 @@ End-to-end encryption guarantees that only the holder of the right key can read 
 
 ## What is a safety number?
 
-A safety number is a short code — a string of digits, or a QR code — calculated from **your keys and your contact’s keys**. You both see the same number if, and only if, you are really talking to each other’s devices.
+A safety number is a short code — a string of digits — calculated from **your keys and your contact’s keys**. You both see the same number if, and only if, you are really talking to each other’s devices.
 
 If someone managed to insert themselves in the middle (a so-called man-in-the-middle attack), the keys would be different, and so would the number.
 
@@ -19,7 +19,7 @@ If someone managed to insert themselves in the middle (a so-called man-in-the-mi
 
 Encryption can’t protect you from talking to the wrong person. Without verification, a compromised or malicious server could, in theory, hand you a fake key for a contact. Comparing safety numbers closes that gap: once verified, even the server can’t swap keys without you noticing.
 
-In Komunikator, verified contacts get a check mark, and group channels show how many members you have verified — for example, “4 of 5 people verified”.
+In Komunikator, every conversation shows whether it’s verified. Unverified ones are marked, and the side panel has a **Show number** button.
 
 ## When to compare safety numbers
 
@@ -33,14 +33,14 @@ You don’t need to verify everyone you ever chat with. Do it when:
 
 There are two easy ways:
 
-1. **In person:** open the contact’s profile, tap *Verify*, and scan each other’s QR codes. It takes about ten seconds.
+1. **In person:** open the conversation, click **Show number** and read the digits side by side. It takes less than a minute.
 2. **Over a call:** read the numbers to each other in a voice call. Because voice is end-to-end encrypted too, and an attacker would struggle to fake your friend’s voice in real time, this is a practical option for remote teams.
 
 Don’t compare numbers over a text message in the same chat you are trying to verify — that proves nothing.
 
 ## What a key change warning means
 
-When a contact’s key changes, Komunikator shows a warning such as “Key changed — check it”. Usually the explanation is harmless:
+When a contact’s key changes, Komunikator shows a warning in the conversation, and the side panel says “new key — check”. Usually the explanation is harmless:
 
 - they installed the app on a new device,
 - they reinstalled it or restored from a backup,
