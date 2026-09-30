@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Features from '../components/Features.astro';
+import Security from '../components/Security.astro';
+import Devices from '../components/Devices.astro';
+import Download from '../components/Download.astro';
+import News from '../components/News.astro';
+import Faq from '../components/Faq.astro';
+import { SITE } from '../site';
+import { LOCALE, getLang, useT } from '../i18n/ui';
+
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang);
+// Pytania z odpowiedziami „do ustalenia” pomijamy w danych strukturalnych.
+const isTbd = (a: string) => /\[(TBD|DO USTALENIA)/.test(a);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: SITE.name,
+    description: t.meta.description,
+    applicationCategory: 'CommunicationApplication',
+    operatingSystem: 'Windows 10, Windows 11, Linux, Android 9+',
+    softwareVersion: '0.9.2',
+    inLanguage: LOCALE[lang].intl,
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    featureList: t.features.items.map((f) => f.title),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: LOCALE[lang].intl,
+    mainEntity: t.faq.items
+      .filter((f) => !isTbd(f.a))
+      .map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+
+<Base jsonLd={jsonLd}>
+  <Hero />
+  <Features />
+  <Security />
+  <Devices />
+  <Download />
+  <News />
+  <Faq />
+</Base>

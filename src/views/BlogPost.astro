@@ -1,0 +1,318 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import { SECTION, SITE } from '../site';
+import { LOCALE, formatDate, getLang, localePath, useT } from '../i18n/ui';
+import { getPosts, getTranslations, postUrl, readingTime, type Post } from '../lib/blog';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang);
+const { Content } = await render(post);
+const alternates = await getTranslations(post);
+const related = (await getPosts(lang)).filter((p) => p.id !== post.id).slice(0, 2);
+const minutes = readingTime(post.body);
+const { title, description, pubDate, updatedDate, category, keywords } = post.data;
+
+const site = Astro.site!;
+const url = new URL(postUrl(post), site).href;
+const blogUrl = new URL(localePath(lang, '/blog/'), site).href;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description,
+    url,
+    mainEntityOfPage: url,
+    inLanguage: LOCALE[lang].intl,
+    datePublished: pubDate.toISOString(),
+    dateModified: (updatedDate ?? pubDate).toISOString(),
+    articleSection: t.blog.categories[category],
+    keywords: keywords.join(', '),
+    image: new URL(SITE.ogImage, site).href,
+    author: { '@type': 'Organization', name: SITE.name, url: site.href },
+    publisher: { '@type': 'Organization', name: SITE.name, logo: { '@type': 'ImageObject', url: new URL('/icon-512.png', site).href } },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: SITE.name, item: new URL(localePath(lang, '/'), site).href },
+      { '@type': 'ListItem', position: 2, name: t.blog.title, item: blogUrl },
+      { '@type': 'ListItem', position: 3, name: title, item: url },
+    ],
+  },
+];
+---
+
+<Base
+  title={`${title} | ${SITE.name}`}
+  description={description}
+  alternates={alternates}
+  jsonLd={jsonLd}
+  article={{ published: pubDate, modified: updatedDate, section: t.blog.categories[category], tags: keywords }}
+>
+  <article class="container post">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={localePath(lang, '/blog/')}><Icon name="chevron" class="back" />{t.blog.back}</a>
+    </nav>
+    <header>
+      <div class="meta">
+        <span class="tag">{t.blog.categories[category]}</span>
+        <time datetime={pubDate.toISOString().slice(0, 10)}>{formatDate(lang, pubDate)}</time>
+        <span>· {minutes} {t.blog.minRead}</span>
+        {
+          updatedDate && (
+            <span>
+              · {t.blog.updated} <time datetime={updatedDate.toISOString().slice(0, 10)}>{formatDate(lang, updatedDate)}</time>
+            </span>
+          )
+        }
+      </div>
+      <h1>{title}</h1>
+      <p class="lede">{description}</p>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <aside class="cta">
+      <h2>{t.blog.ctaTitle}</h2>
+      <p>{t.blog.ctaText}</p>
+      <Button href={`${localePath(lang, '/')}#${SECTION.download}`} size="lg"><Icon name="download" stroke={2} />{t.blog.ctaButton}</Button>
+    </aside>
+
+    {
+      related.length > 0 && (
+        <nav class="related" aria-label={t.blog.related}>
+          <h2>{t.blog.related}</h2>
+          <ul>
+            {related.map((p) => (
+              <li>
+                <a href={postUrl(p)}>{p.data.title}</a>
+                <span>{p.data.description}</span>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  .post {
+    max-width: calc(760px + 2 * var(--gutter));
+    padding-top: 48px;
+    padding-bottom: 120px;
+  }
+  .crumbs a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-2);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--text);
+  }
+  .crumbs :global(.back) {
+    transform: rotate(180deg);
+  }
+  header {
+    padding: 28px 0 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    font-size: 13.5px;
+    color: var(--text-3);
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  h1 {
+    margin: 18px 0 0;
+    font-size: 46px;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+  .lede {
+    margin: 18px 0 0;
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--text-2);
+  }
+
+  .prose {
+    padding-top: 12px;
+    font-size: 17.5px;
+    line-height: 1.7;
+    color: #ded7cd;
+  }
+  .prose :global(h2) {
+    margin: 48px 0 12px;
+    font-size: 28px;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--text);
+  }
+  .prose :global(h3) {
+    margin: 32px 0 8px;
+    font-size: 21px;
+    color: var(--text);
+  }
+  .prose :global(p),
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 16px 0;
+  }
+  .prose :global(li) {
+    margin: 8px 0;
+  }
+  .prose :global(li::marker) {
+    color: var(--accent);
+  }
+  .prose :global(strong) {
+    color: var(--text);
+  }
+  .prose :global(a) {
+    color: var(--accent);
+    text-underline-offset: 3px;
+  }
+  .prose :global(code) {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: var(--surface-2);
+    color: var(--text);
+  }
+  .prose :global(table) {
+    width: 100%;
+    margin: 24px 0;
+    border-collapse: collapse;
+    font-size: 15.5px;
+  }
+  .prose :global(th),
+  .prose :global(td) {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+  }
+  .prose :global(th) {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .cta {
+    margin-top: 56px;
+    padding: 32px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--accent-line);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .cta h2 {
+    margin: 0;
+    font-size: 24px;
+  }
+  .cta p {
+    margin: 0 0 6px;
+    color: var(--text-2);
+  }
+  .related {
+    margin-top: 56px;
+  }
+  .related h2 {
+    margin: 0 0 16px;
+    font-size: 20px;
+  }
+  .related ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .related li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .related a {
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .related a:hover {
+    color: var(--accent);
+  }
+  .related span {
+    font-size: 14.5px;
+    color: var(--text-2);
+  }
+
+  @media (max-width: 720px) {
+    .post {
+      padding-top: 28px;
+      padding-bottom: 72px;
+    }
+    h1 {
+      font-size: 32px;
+    }
+    .lede {
+      font-size: 17px;
+    }
+    .prose {
+      font-size: 16.5px;
+    }
+    .prose :global(h2) {
+      font-size: 23px;
+      margin-top: 40px;
+    }
+    .prose :global(table) {
+      display: block;
+      overflow-x: auto;
+      font-size: 14.5px;
+    }
+    .cta {
+      padding: 22px;
+    }
+    .cta :global(.btn) {
+      width: 100%;
+    }
+  }
+</style>

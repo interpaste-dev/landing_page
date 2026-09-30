@@ -1,21 +1,24 @@
 ---
 import Icon, { type IconName } from './Icon.astro';
 import Button from './Button.astro';
-import { LINKS } from '../site';
+import { LINKS, SECTION } from '../site';
+import { getLang, useT } from '../i18n/ui';
 
+const t = useT(getLang(Astro.currentLocale)).download;
+const p = t.platforms;
 const platforms: { name: string; meta: string; icon: IconName; href?: string; cta?: string; primary?: boolean }[] = [
-  { name: 'Windows', meta: 'Windows 10 i 11 · 64-bit', icon: 'monitor', href: LINKS.windows, cta: 'Pobierz .exe', primary: true },
-  { name: 'Linux', meta: 'AppImage · .deb', icon: 'chip', href: LINKS.linux, cta: 'Pobierz' },
-  { name: 'Android', meta: 'Android 9+', icon: 'phone', href: LINKS.android, cta: 'Pobierz APK' },
-  { name: 'iOS', meta: 'w przygotowaniu', icon: 'phone' },
+  { name: 'Windows', meta: p.windows.meta, icon: 'monitor', href: LINKS.windows, cta: p.windows.cta, primary: true },
+  { name: 'Linux', meta: p.linux.meta, icon: 'chip', href: LINKS.linux, cta: p.linux.cta },
+  { name: 'Android', meta: p.android.meta, icon: 'phone', href: LINKS.android, cta: p.android.cta },
+  { name: 'iOS', meta: p.ios.meta, icon: 'phone' },
 ];
 ---
 
-<section id="pobierz" class="container download">
+<section id={SECTION.download} class="container download">
   <div class="section-head">
-    <span class="eyebrow">Pobierz</span>
-    <h2 class="h2">Zacznij w dwie minuty.</h2>
-    <p class="lead">Za darmo. Bez reklam. Możesz też postawić własny serwer.</p>
+    <span class="eyebrow">{t.eyebrow}</span>
+    <h2 class="h2">{t.title}</h2>
+    <p class="lead">{t.lead}</p>
   </div>
   <ul class="grid">
     {
@@ -34,7 +37,7 @@ const platforms: { name: string; meta: string; icon: IconName; href?: string; ct
               {p.cta}
             </Button>
           ) : (
-            <span class="soon">Wkrótce</span>
+            <span class="soon">{t.soon}</span>
           )}
         </li>
       ))

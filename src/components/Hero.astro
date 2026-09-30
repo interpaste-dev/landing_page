@@ -2,7 +2,8 @@
 import { getImage } from 'astro:assets';
 import Icon from './Icon.astro';
 import Button from './Button.astro';
-import { LINKS } from '../site';
+import { LINKS, SECTION } from '../site';
+import { getLang, useT } from '../i18n/ui';
 import appDesktop from '../assets/app-desktop.png';
 import appMobile from '../assets/app-mobile-chat.png';
 
@@ -17,7 +18,7 @@ const desktop = await variants(appDesktop, [720, 1080, 1440]);
 const mobileSizes = '264px';
 const desktopSizes = '(max-width: 1180px) 92vw, 1080px';
 
-const perks = ['Bez numeru telefonu', 'Open source', 'Własny serwer', '~40 MB RAM'];
+const t = useT(getLang(Astro.currentLocale)).hero;
 ---
 
 <section class="hero">
@@ -25,24 +26,21 @@ const perks = ['Bez numeru telefonu', 'Open source', 'Własny serwer', '~40 MB R
   <div class="glow" aria-hidden="true"></div>
 
   <div class="container copy">
-    <a href="#nowosci" class="pill">
-      <span class="pill-tag">Nowość</span>
-      <span class="pill-text">Udostępnianie ekranu 1440p · 60 FPS, też szyfrowane</span>
+    <a href={`#${SECTION.news}`} class="pill">
+      <span class="pill-tag">{t.pillTag}</span>
+      <span class="pill-text">{t.pill}</span>
       <Icon name="chevron" color="var(--text-3)" />
     </a>
-    <h1>Serwery, czat i głos.<br /><span>Tylko dla was.</span></h1>
-    <p class="sub">
-      Komunikator dla drużyn i znajomych, w którym serwer nie może przeczytać ani jednej wiadomości. Lekki, szybki
-      i otwarty.
-    </p>
+    <h1>{t.titleA}<br /><span>{t.titleB}</span></h1>
+    <p class="sub">{t.sub}</p>
     <div class="ctas">
-      <Button href={LINKS.windows} size="lg" class="cta-desktop"><Icon name="download" stroke={2} />Pobierz na Windows</Button>
-      <Button href={LINKS.android} size="lg" class="cta-mobile"><Icon name="download" stroke={2} />Pobierz na Androida</Button>
-      <Button href={LINKS.register} size="lg" variant="outline">Załóż konto w przeglądarce</Button>
+      <Button href={LINKS.windows} size="lg" class="cta-desktop"><Icon name="download" stroke={2} />{t.ctaWindows}</Button>
+      <Button href={LINKS.android} size="lg" class="cta-mobile"><Icon name="download" stroke={2} />{t.ctaAndroid}</Button>
+      <Button href={LINKS.register} size="lg" variant="outline">{t.ctaWeb}</Button>
     </div>
     <ul class="perks">
       {
-        perks.map((p) => (
+        t.perks.map((p) => (
           <li>
             <Icon name="check" size={17} stroke={2} color="var(--ok)" />
             {p}
@@ -63,7 +61,7 @@ const perks = ['Bez numeru telefonu', 'Open source', 'Własny serwer', '~40 MB R
           src={desktop.webp.src}
           width="1440"
           height="900"
-          alt="Okno aplikacji Komunikator: serwer „Drużyna ranked”, kanał #taktyka z wiadomościami, kanały głosowe i lista osób online"
+          alt={t.shotAlt}
           fetchpriority="high"
           loading="eager"
           decoding="async"
@@ -73,19 +71,19 @@ const perks = ['Bez numeru telefonu', 'Open source', 'Własny serwer', '~40 MB R
 
     <div class="chip" style="left: 40px; top: 150px">
       <span class="chip-ico ok"><Icon name="key" stroke={2} /></span>
-      <span class="chip-txt">Klucze grupy odświeżone<small>epoka 14 · MLS</small></span>
+      <span class="chip-txt">{t.chipKeys}<small>{t.chipKeysSub}</small></span>
     </div>
     <div class="chip" style="right: 40px; top: 90px">
       <span class="avatar">K</span>
-      <span class="chip-txt">Kuba mówi<small>Lobby · 18 ms</small></span>
+      <span class="chip-txt">{t.chipTalking}<small>{t.chipTalkingSub}</small></span>
     </div>
     <div class="chip" style="left: 0; top: 470px">
       <span class="chip-ico"><Icon name="server" stroke={2} /></span>
-      <span class="chip-txt">Serwer widzi<small class="mono">8f3a·c21e·9b07·44d1…</small></span>
+      <span class="chip-txt">{t.chipServer}<small class="mono">8f3a·c21e·9b07·44d1…</small></span>
     </div>
     <div class="chip" style="right: 0; top: 400px">
       <span class="chip-ico ok"><Icon name="shield" stroke={2} /></span>
-      Zweryfikowano 4 z 5 osób
+      {t.chipVerified}
     </div>
     <div class="fade" aria-hidden="true"></div>
   </div>

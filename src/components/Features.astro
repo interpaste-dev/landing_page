@@ -1,21 +1,20 @@
 ---
 import Icon, { type IconName } from './Icon.astro';
+import { SECTION } from '../site';
+import { getLang, useT } from '../i18n/ui';
 
-const features: { icon: IconName; title: string; text: string }[] = [
-  { icon: 'lock', title: 'Szyfrowanie wszystkiego', text: 'Wiadomości, pliki, reakcje i rozmowy głosowe. Klucze powstają na Twoim urządzeniu.' },
-  { icon: 'speaker', title: 'Głos z niskim opóźnieniem', text: 'Opus 48 kHz, push-to-talk, redukcja szumów i udostępnianie ekranu w 60 FPS.' },
-  { icon: 'bolt', title: 'Lekki klient', text: 'Około 40 MB RAM. Nie zabiera klatek w grze i działa na starszym sprzęcie.' },
-  { icon: 'gamepad', title: 'Overlay w grze', text: 'Kto mówi, szybka odpowiedź i powiadomienia bez treści — bez wychodzenia z gry.' },
-  { icon: 'palette', title: 'Twój wygląd', text: 'Motywy, kolor akcentu, gęstość i własne nazwy kontaktów. Zostają lokalnie.' },
-  { icon: 'shield', title: 'Weryfikacja urządzeń', text: 'Numery bezpieczeństwa i kod QR. Ostrzeżemy, gdy czyjś klucz się zmieni.' },
-];
+const t = useT(getLang(Astro.currentLocale)).features;
+const icons: IconName[] = ['lock', 'speaker', 'bolt', 'gamepad', 'palette', 'shield'];
+const features = t.items.map((f, i) => ({ ...f, icon: icons[i] }));
+
+
 ---
 
-<section id="funkcje" class="container features">
+<section id={SECTION.features} class="container features">
   <div class="section-head">
-    <span class="eyebrow">Funkcje</span>
-    <h2 class="h2">Jak Discord. Tylko prywatnie.</h2>
-    <p class="lead">Wszystko, czego używacie na co dzień — bez oddawania treści rozmów komukolwiek.</p>
+    <span class="eyebrow">{t.eyebrow}</span>
+    <h2 class="h2">{t.title}</h2>
+    <p class="lead">{t.lead}</p>
   </div>
   <ul class="grid">
     {

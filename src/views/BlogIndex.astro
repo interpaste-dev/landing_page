@@ -1,0 +1,194 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon, { type IconName } from '../components/Icon.astro';
+import { SITE } from '../site';
+import { LOCALE, formatDate, getLang, localePath, useT } from '../i18n/ui';
+import { getPosts, postUrl, readingTime } from '../lib/blog';
+
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang);
+const posts = await getPosts(lang);
+const look: Record<string, { tone: 'ok' | 'accent'; icon: IconName }> = {
+  security: { tone: 'ok', icon: 'shield' },
+  gaming: { tone: 'accent', icon: 'gamepad' },
+  product: { tone: 'accent', icon: 'lock' },
+};
+const site = Astro.site!;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: `${SITE.name} — ${t.blog.title}`,
+    description: t.blog.description,
+    url: new URL(localePath(lang, '/blog/'), site).href,
+    inLanguage: LOCALE[lang].intl,
+    blogPost: posts.map((p) => ({
+      '@type': 'BlogPosting',
+      headline: p.data.title,
+      url: new URL(postUrl(p), site).href,
+      datePublished: p.data.pubDate.toISOString(),
+    })),
+  },
+];
+---
+
+<Base title={t.blog.metaTitle} description={t.blog.description} jsonLd={jsonLd}>
+  <section class="container head">
+    <span class="eyebrow">{t.blog.title}</span>
+    <h1>{t.blog.lead}</h1>
+    <a class="rss" href={localePath(lang, '/rss.xml')}>{t.blog.rss}</a>
+  </section>
+
+  <section class="container">
+    <ul class="grid">
+      {
+        posts.map((p) => {
+          const l = look[p.data.category];
+          return (
+            <li class="card">
+              <div class:list={['thumb', l.tone]} aria-hidden="true">
+                <Icon name={l.icon} size={56} stroke={1.4} />
+              </div>
+              <div class="meta">
+                <span class:list={['tag', l.tone]}>{t.blog.categories[p.data.category]}</span>
+                <time datetime={p.data.pubDate.toISOString().slice(0, 10)}>{formatDate(lang, p.data.pubDate)}</time>
+                <span>· {readingTime(p.body)} {t.blog.minRead}</span>
+              </div>
+              <h2>
+                <a href={postUrl(p)}>{p.data.title}</a>
+              </h2>
+              <p>{p.data.description}</p>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .head {
+    padding-top: 72px;
+    padding-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  h1 {
+    margin: 0;
+    max-width: 760px;
+    font-size: 48px;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+  .rss {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 120px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 24px;
+  }
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .thumb {
+    position: relative;
+    height: 200px;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 18px 20px;
+  }
+  .thumb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgb(241 236 228 / 0.07) 1px, transparent 1.4px);
+    background-size: 20px 20px;
+  }
+  .thumb.ok {
+    background: linear-gradient(135deg, #2b3a30 0%, #18211c 100%);
+    color: var(--ok);
+  }
+  .thumb.accent {
+    background: linear-gradient(135deg, #3d2c22 0%, #1f1813 100%);
+    color: var(--accent);
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    font-size: 13px;
+    color: var(--text-3);
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 12px;
+    background: var(--surface-2);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .tag.ok {
+    color: var(--ok);
+  }
+  .tag.accent {
+    color: var(--accent);
+  }
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.25;
+  }
+  h2 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  h2 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  h2 a:hover {
+    color: var(--accent);
+  }
+  p {
+    margin: 0;
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--text-2);
+  }
+  @media (max-width: 720px) {
+    .head {
+      padding-top: 40px;
+      padding-bottom: 28px;
+    }
+    h1 {
+      font-size: 32px;
+    }
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 28px;
+      padding-bottom: 72px;
+    }
+    .thumb {
+      height: 140px;
+    }
+    h2 {
+      font-size: 20px;
+    }
+  }
+</style>

@@ -1,32 +1,37 @@
 ---
 import Logo from './Logo.astro';
-import { LINKS, SITE } from '../site';
+import { LINKS, SECTION, SITE } from '../site';
+import { getLang, localePath, useT } from '../i18n/ui';
 
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang);
+const home = localePath(lang, '/');
 const columns = [
   {
-    title: 'Produkt',
+    title: t.footer.product,
     links: [
-      { label: 'Funkcje', href: '#funkcje' },
-      { label: 'Na telefonie', href: '#urzadzenia' },
-      { label: 'Pobierz', href: '#pobierz' },
-      { label: 'Nowości', href: '#nowosci' },
+      { label: t.nav.features, href: `${home}#${SECTION.features}` },
+      { label: t.nav.mobile, href: `${home}#${SECTION.mobile}` },
+      { label: t.nav.download, href: `${home}#${SECTION.download}` },
+      { label: t.news.title, href: `${home}#${SECTION.news}` },
     ],
   },
   {
-    title: 'Zasoby',
+    title: t.footer.resources,
     links: [
-      { label: 'Bezpieczeństwo', href: '#bezpieczenstwo' },
-      { label: 'Częste pytania', href: '#faq' },
-      { label: 'Kod źródłowy', href: LINKS.source },
+      { label: t.nav.blog, href: localePath(lang, '/blog/') },
+      { label: t.nav.security, href: `${home}#${SECTION.security}` },
+      { label: t.nav.faq, href: `${home}#${SECTION.faq}` },
+      { label: t.footer.source, href: LINKS.source },
     ],
   },
   {
-    title: 'Informacje',
+    title: t.footer.info,
     links: [
-      { label: 'Regulamin', href: LINKS.terms },
-      { label: 'Prywatność', href: LINKS.privacy },
-      { label: 'Kontakt', href: LINKS.contact },
-      { label: 'Status serwera', href: LINKS.status },
+      { label: t.footer.terms, href: LINKS.terms },
+      { label: t.footer.privacy, href: LINKS.privacy },
+      { label: t.footer.contact, href: LINKS.contact },
+      { label: t.footer.status, href: LINKS.status },
     ],
   },
 ];
@@ -38,7 +43,7 @@ const year = new Date().getFullYear();
     <div class="top">
       <div class="about">
         <span class="brand"><Logo size={24} />{SITE.name}</span>
-        <p>Prywatny komunikator dla drużyn i znajomych. Szyfrowanie end-to-end MLS.</p>
+        <p>{t.footer.about}</p>
       </div>
       {
         columns.map((c) => (
@@ -52,7 +57,7 @@ const year = new Date().getFullYear();
       }
     </div>
     <div class="bottom">
-      <span>© {year} {SITE.name} · open source</span>
+      <span>© {year} {SITE.name} · {t.footer.rights}</span>
       <span>MLS RFC 9420</span>
     </div>
   </div>

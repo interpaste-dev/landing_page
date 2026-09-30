@@ -5,50 +5,63 @@ import fontLatinExt from '@fontsource-variable/figtree/files/figtree-latin-ext-w
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE } from '../site';
+import { DEFAULT_LANG, LANGS, LOCALE, getLang, localePath, useT, type Lang } from '../i18n/ui';
 
 interface Props {
   title?: string;
   description?: string;
   image?: string;
   imageAlt?: string;
-  /** Dodatkowe obiekty schema.org (JSON-LD) dla konkretnej podstrony. */
+  /** Adresy tej strony w innych językach. Domyślnie ta sama ścieżka z innym prefiksem. */
+  alternates?: Partial<Record<Lang, string>>;
+  /** Dodatkowe obiekty schema.org (JSON-LD). */
   jsonLd?: Record<string, unknown>[];
+  article?: { published: Date; modified?: Date; section: string; tags: string[] };
   noindex?: boolean;
 }
 
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang);
 const {
-  title = SITE.title,
-  description = SITE.description,
+  title = t.meta.title,
+  description = t.meta.description,
   image = SITE.ogImage,
-  imageAlt = SITE.ogImageAlt,
+  imageAlt = t.meta.ogAlt,
   jsonLd = [],
+  article,
   noindex = false,
 } = Astro.props;
 
+// Ścieżka bez prefiksu języka, np. '/pl/blog/' → '/blog/'.
+const bare = lang === DEFAULT_LANG ? Astro.url.pathname : Astro.url.pathname.replace(new RegExp(`^/${lang}(?=/|$)`), '') || '/';
+const alternates: Partial<Record<Lang, string>> =
+  Astro.props.alternates ?? Object.fromEntries(LANGS.map((l) => [l, localePath(l, bare)]));
+
 const site = Astro.site!;
-const canonical = new URL(Astro.url.pathname, site).href;
-const ogImage = new URL(image, site).href;
+const abs = (path: string) => new URL(path, site).href;
+const canonical = abs(Astro.url.pathname);
+const ogImage = abs(image);
 
 const baseLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE.name,
-    url: site.href,
-    inLanguage: SITE.lang,
+    url: abs(localePath(lang, '/')),
+    inLanguage: LOCALE[lang].intl,
   },
   {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: SITE.name,
     url: site.href,
-    logo: new URL('/icon-512.png', site).href,
+    logo: abs('/icon-512.png'),
   },
 ];
 ---
 
 <!doctype html>
-<html lang={SITE.lang}>
+<html lang={LOCALE[lang].intl}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -59,6 +72,13 @@ const baseLd = [
     <meta name="theme-color" content={SITE.themeColor} />
     <meta name="color-scheme" content="dark" />
 
+    {
+      LANGS.filter((l) => alternates[l]).map((l) => (
+        <link rel="alternate" hreflang={LOCALE[l].intl} href={abs(alternates[l]!)} />
+      ))
+    }
+    {alternates[DEFAULT_LANG] && <link rel="alternate" hreflang="x-default" href={abs(alternates[DEFAULT_LANG]!)} />}
+
     <link rel="preload" href={fontLatin} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={fontLatinExt} as="font" type="font/woff2" crossorigin />
 
@@ -67,11 +87,13 @@ const baseLd = [
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} — ${t.blog.title}`} href={localePath(lang, '/rss.xml')} />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
     <meta property="og:site_name" content={SITE.name} />
-    <meta property="og:locale" content={SITE.locale} />
+    <meta property="og:locale" content={LOCALE[lang].og} />
+    {LANGS.filter((l) => l !== lang && alternates[l]).map((l) => <meta property="og:locale:alternate" content={LOCALE[l].og} />)}
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -80,6 +102,16 @@ const baseLd = [
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={imageAlt} />
+    {
+      article && (
+        <>
+          <meta property="article:published_time" content={article.published.toISOString()} />
+          {article.modified && <meta property="article:modified_time" content={article.modified.toISOString()} />}
+          <meta property="article:section" content={article.section} />
+          {article.tags.map((tag) => <meta property="article:tag" content={tag} />)}
+        </>
+      )
+    }
 
     <!-- X / Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -91,8 +123,8 @@ const baseLd = [
     {[...baseLd, ...jsonLd].map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
   </head>
   <body>
-    <a class="skip" href="#main">Przejdź do treści</a>
-    <Header />
+    <a class="skip" href="#main">{t.a11y.skip}</a>
+    <Header alternates={alternates} />
     <main id="main">
       <slot />
     </main>

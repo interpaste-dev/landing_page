@@ -2,42 +2,76 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import Button from './Button.astro';
-import { LINKS, NAV, SITE } from '../site';
+import { LINKS, SECTION, SITE } from '../site';
+import { LANGS, LOCALE, getLang, localePath, useT, type Lang } from '../i18n/ui';
+
+interface Props {
+  /** Adresy tej samej strony w innych językach (do przełącznika języka). */
+  alternates: Partial<Record<Lang, string>>;
+}
+
+const { alternates } = Astro.props;
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang);
+const home = localePath(lang, '/');
+// Na stronie głównej kotwice działają lokalnie, na podstronach prowadzą do strony głównej.
+const onHome = Astro.url.pathname === home;
+const anchor = (id: string) => (onHome ? `#${id}` : `${home}#${id}`);
+const link = (href: string) => (href.startsWith('#') ? anchor(href.slice(1)) : href);
+
+const nav = [
+  { label: t.nav.features, href: anchor(SECTION.features) },
+  { label: t.nav.security, href: anchor(SECTION.security) },
+  { label: t.nav.mobile, href: anchor(SECTION.mobile) },
+  { label: t.nav.blog, href: localePath(lang, '/blog/') },
+  { label: t.nav.faq, href: anchor(SECTION.faq) },
+  { label: t.nav.download, href: anchor(SECTION.download) },
+];
+const langLinks = LANGS.map((l) => ({ lang: l, href: alternates[l] ?? localePath(l, '/') }));
 ---
 
 <header class="header">
   <div class="container inner">
-    <a href="/" class="brand" aria-label={`${SITE.name} — strona główna`}>
+    <a href={home} class="brand" aria-label={`${SITE.name} — ${t.a11y.home}`}>
       <Logo />
       <span>{SITE.name}</span>
     </a>
 
-    <nav aria-label="Menu główne" class="nav">
-      {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+    <nav aria-label="Menu" class="nav">
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
     </nav>
 
     <div class="actions">
-      <Button variant="outline" href={LINKS.login}>Zaloguj</Button>
-      <Button href={LINKS.register}>Załóż konto</Button>
+      <nav class="langs" aria-label={t.a11y.language}>
+        {
+          langLinks.map((l) => (
+            <a href={l.href} hreflang={l.lang} lang={l.lang} aria-current={l.lang === lang ? 'true' : undefined} title={LOCALE[l.lang].label}>
+              {LOCALE[l.lang].short}
+            </a>
+          ))
+        }
+      </nav>
+      <Button variant="outline" href={link(LINKS.login)} class="desk">{t.nav.login}</Button>
+      <Button href={link(LINKS.register)} class="desk">{t.nav.register}</Button>
     </div>
 
     <!-- Menu mobilne na Popover API: działa bez JavaScriptu. -->
-    <button class="burger" popovertarget="mobile-menu" aria-label="Otwórz menu">
+    <button class="burger" popovertarget="mobile-menu" aria-label={t.a11y.openMenu}>
       <Icon name="menu" size={20} stroke={2} />
     </button>
     <div id="mobile-menu" popover class="sheet">
       <div class="sheet-top">
         <span class="brand"><Logo />{SITE.name}</span>
-        <button class="burger" popovertarget="mobile-menu" popovertargetaction="hide" aria-label="Zamknij menu">
+        <button class="burger" popovertarget="mobile-menu" popovertargetaction="hide" aria-label={t.a11y.closeMenu}>
           <Icon name="close" size={20} stroke={2} />
         </button>
       </div>
-      <nav aria-label="Menu mobilne" class="sheet-nav">
-        {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+      <nav aria-label="Menu" class="sheet-nav">
+        {nav.map((item) => <a href={item.href}>{item.label}</a>)}
       </nav>
       <div class="sheet-actions">
-        <Button href={LINKS.register} size="lg" block>Załóż konto</Button>
-        <Button variant="outline" href={LINKS.login} size="lg" block>Zaloguj</Button>
+        <Button href={link(LINKS.register)} size="lg" block>{t.nav.register}</Button>
+        <Button variant="outline" href={link(LINKS.login)} size="lg" block>{t.nav.login}</Button>
       </div>
     </div>
   </div>
@@ -98,6 +132,29 @@ import { LINKS, NAV, SITE } from '../site';
     margin-left: auto;
     display: flex;
     gap: 10px;
+  }
+  .langs {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--line-strong);
+  }
+  .langs a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 9px;
+    border-radius: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-3);
+    text-decoration: none;
+  }
+  .langs a[aria-current] {
+    background: var(--surface-3);
+    color: var(--text);
   }
   .burger {
     display: none;
@@ -169,11 +226,17 @@ import { LINKS, NAV, SITE } from '../site';
     .inner {
       height: 64px;
     }
-    .actions {
+    .actions :global(.desk) {
       display: none;
     }
-    .inner > .burger {
-      margin-left: auto;
+    .langs {
+      height: 44px;
+    }
+    .langs a {
+      padding: 0 11px;
+    }
+    .inner {
+      gap: 12px;
     }
   }
 </style>

@@ -1,13 +1,16 @@
 ---
 import Icon from './Icon.astro';
-import { FAQ } from '../site';
+import { SECTION } from '../site';
+import { getLang, useT } from '../i18n/ui';
+
+const t = useT(getLang(Astro.currentLocale)).faq;
 ---
 
-<section id="faq" class="container faq">
-  <h2 class="h2">Częste pytania</h2>
+<section id={SECTION.faq} class="container faq">
+  <h2 class="h2">{t.title}</h2>
   <div class="list">
     {
-      FAQ.map((item, i) => (
+      t.items.map((item, i) => (
         <details open={i === 0}>
           <summary>
             {item.q}

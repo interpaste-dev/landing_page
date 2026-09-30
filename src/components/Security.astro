@@ -1,53 +1,48 @@
 ---
 import Icon from './Icon.astro';
 
-const rows = [
-  { label: 'Treść wiadomości i plików', verdict: 'nie widzi', ok: true },
-  { label: 'Rozmowy głosowe', verdict: 'nie słyszy', ok: true },
-  { label: 'Nazwy kanałów i opisy', verdict: 'nie widzi', ok: true },
-  { label: 'Kto jest w grupie i kiedy był online', verdict: 'widzi (metadane)', ok: false },
-];
+import { SECTION } from '../site';
+import { getLang, useT } from '../i18n/ui';
+
+const t = useT(getLang(Astro.currentLocale)).security;
 ---
 
-<section id="bezpieczenstwo" class="container">
+<section id={SECTION.security} class="container">
   <div class="panel">
     <div class="section-head">
-      <span class="eyebrow">Bezpieczeństwo</span>
-      <h2 class="h2">Serwer widzi tylko szum.</h2>
-      <p class="lead">
-        Wiadomość jest szyfrowana, zanim opuści Twój komputer. Serwer tylko ją przekazuje — nie ma kluczy, żeby ją
-        otworzyć.
-      </p>
+      <span class="eyebrow">{t.eyebrow}</span>
+      <h2 class="h2">{t.title}</h2>
+      <p class="lead">{t.lead}</p>
     </div>
 
-    <ol class="flow" aria-label="Droga wiadomości">
+    <ol class="flow" aria-label={t.flowLabel}>
       <li class="node accent">
         <span class="node-ico"><Icon name="monitor" size={26} /></span>
-        <strong>Twoje urządzenie</strong>
-        <span class="msg">„o 20 gramy?”</span>
-        <span class="note">szyfruje kluczem grupy</span>
+        <strong>{t.you}</strong>
+        <span class="msg">{t.sample}</span>
+        <span class="note">{t.youNote}</span>
       </li>
       <li class="arrow" aria-hidden="true"><span></span><Icon name="chevron" size={22} /></li>
       <li class="node">
         <span class="node-ico muted"><Icon name="server" size={26} /></span>
-        <strong>Serwer</strong>
+        <strong>{t.server}</strong>
         <span class="mono cipher">8f3a·c21e·9b07·44d1·e6f0…</span>
-        <span class="note">przekazuje szyfrogram</span>
+        <span class="note">{t.serverNote}</span>
       </li>
       <li class="arrow" aria-hidden="true"><span></span><Icon name="chevron" size={22} /></li>
       <li class="node accent">
         <span class="node-ico"><Icon name="users" size={26} /></span>
-        <strong>Urządzenia znajomych</strong>
-        <span class="msg">„o 20 gramy?”</span>
-        <span class="note">odszyfrowują lokalnie</span>
+        <strong>{t.friends}</strong>
+        <span class="msg">{t.sample}</span>
+        <span class="note">{t.friendsNote}</span>
       </li>
     </ol>
 
     <div class="table">
-      <h3>Co widzi nasz serwer</h3>
+      <h3>{t.tableTitle}</h3>
       <ul>
         {
-          rows.map((r) => (
+          t.rows.map((r) => (
             <li>
               <span>{r.label}</span>
               <span class:list={['verdict', { warn: !r.ok }]}>
