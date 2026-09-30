@@ -56,9 +56,14 @@ import { LINKS, NAV, SITE } from '../site';
     top: 0;
     z-index: 50;
     border-bottom: 1px solid var(--line);
-    background: rgb(18 17 17 / 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgb(18 17 17 / 0.96);
+  }
+  @media (min-width: 721px) {
+    .header {
+      background: rgb(18 17 17 / 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
   }
   .inner {
     height: 76px;

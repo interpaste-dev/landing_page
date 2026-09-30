@@ -122,6 +122,14 @@ textarea {
   text-align: center;
 }
 
+/* Sekcje poniżej pierwszego ekranu: przeglądarka liczy style/layout/paint
+   dopiero, gdy zbliżają się do viewportu. */
+main > section:not(:first-child),
+body > footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
 .mono {
   font-family: var(--mono);
 }
