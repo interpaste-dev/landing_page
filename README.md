@@ -161,6 +161,16 @@ Nowe wydanie: dopisz je na górze `releases` w `src/i18n/pages/changelog.ts` —
 
 `public/_headers` ustawia cache i nagłówki bezpieczeństwa. Rocket Loader zostaw wyłączony.
 
+## Wersja testowa — GitHub Pages
+
+Workflow `.github/workflows/pages.yml` buduje stronę po każdym pushu na `main` i wystawia ją pod `https://interpaste-dev.github.io/landing_page/`.
+
+- włącz raz: **Settings → Pages → Source: GitHub Actions**
+- build ma `NOINDEX=1` — meta `noindex` i `robots.txt` z `Disallow: /`, żeby kopia testowa nie konkurowała z produkcją
+- `scripts/rebase.sh` dopisuje prefiks `/landing_page` do ścieżek (Pages projektu działa w podkatalogu)
+- GitHub Pages ignoruje `public/_headers` — cache i nagłówki bezpieczeństwa działają tylko na Cloudflare
+- prywatne repo: Pages wymaga planu GitHub Team; na darmowym planie repo musi być publiczne
+
 ## Do uzupełnienia
 
 - domena — `SITE_URL` przy buildzie (domyślnie `https://interpaste.dev`); od niej zależą canonical, hreflang, OG, RSS i sitemap

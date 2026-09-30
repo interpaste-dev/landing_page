@@ -29,7 +29,8 @@ const {
   imageAlt = t.meta.ogAlt,
   jsonLd = [],
   article,
-  noindex = false,
+  // NOINDEX=1 przy buildzie (np. wersja testowa na GitHub Pages) blokuje indeksowanie całej strony.
+  noindex = import.meta.env.NOINDEX === '1',
 } = Astro.props;
 
 // Ścieżka bez prefiksu języka, np. '/pl/blog/' → '/blog/'.
