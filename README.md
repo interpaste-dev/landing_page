@@ -1,50 +1,123 @@
-# Landing — Komunikator
+# Komunikator — landing page
 
-Strona główna komunikatora, zbudowana w [Astro](https://astro.build) na podstawie projektu „Strona www · desktop / mobile”.
+Strona produktowa i blog komunikatora. Statyczny build w Astro, dwa języki (EN/PL), zero JS po stronie klienta.
 
-## Start
-
-```sh
+```
 npm install
 npm run dev       # http://localhost:4321
-npm run build     # statyczny build do dist/
+npm run build     # → dist/
 npm run preview
 ```
 
-## Języki
+## Stack
 
-- angielski (domyślny) pod `/`, polski pod `/pl/` — tagi `hreflang` + `x-default`, przełącznik EN/PL w nagłówku
-- wszystkie teksty interfejsu: `src/i18n/ui.ts` (oba słowniki muszą mieć te same klucze — pilnuje tego TypeScript)
+| Warstwa     | Technologia                                           |
+| ----------- | ----------------------------------------------------- |
+| Framework   | Astro 7 (statyczny output)                            |
+| Język       | TypeScript (strict)                                   |
+| Treści      | Astro Content Collections (Markdown + schema Zod)     |
+| i18n        | Astro i18n — `en` pod `/`, `pl` pod `/pl/`            |
+| Obrazy      | `astro:assets` + sharp → AVIF / WebP, `srcset`        |
+| Font        | Figtree Variable (self-hosted, `@fontsource-variable`) |
+| SEO         | `@astrojs/sitemap`, `@astrojs/rss`, JSON-LD           |
+| Style       | CSS scoped w komponentach + tokeny w `global.css`     |
+| JS klienta  | brak (menu mobilne na Popover API)                    |
 
-## Blog
+## Architektura
 
-- wpisy: `src/content/blog/<en|pl>/<slug>.md`
-- `translationKey` w frontmatterze łączy tłumaczenia (hreflang i przełącznik języka prowadzą do odpowiednika)
-- `description` ma 70–170 znaków, `title` do 70 — schema odrzuci build, jeśli się nie zmieszczą
-- każdy wpis dostaje JSON-LD `BlogPosting` + `BreadcrumbList`, meta `article:*` i trafia do RSS (`/rss.xml`, `/pl/rss.xml`)
-- sekcja „Nowości” na stronie głównej pokazuje 3 najnowsze wpisy w danym języku
+```
+                    ┌──────────────────────────────┐
+                    │        src/i18n/ui.ts        │  teksty EN + PL
+                    └──────────────┬───────────────┘
+                                   │
+ src/content/blog/{en,pl}/*.md     │     src/assets/*.png
+          │                        │            │
+          ▼                        ▼            ▼
+ ┌─────────────────┐     ┌──────────────────────────────┐
+ │  src/lib/blog   │────▶│  src/views/                  │
+ │  src/lib/rss    │     │   Home · BlogIndex · BlogPost│
+ └─────────────────┘     └──────────────┬───────────────┘
+                                        │ używane przez
+                    ┌───────────────────┴───────────────────┐
+                    ▼                                       ▼
+          src/pages/  (EN, /)                     src/pages/pl/  (PL, /pl/)
+          index · blog/ · blog/[slug] · rss.xml   index · blog/ · blog/[slug] · rss.xml
+                    │                                       │
+                    └───────────────────┬───────────────────┘
+                                        ▼
+                                 astro build → dist/
+                   HTML + inline CSS · AVIF/WebP · sitemap · RSS · robots.txt
+```
+
+## PageSpeed (Lighthouse, mobile)
+
+Emulacja Moto G Power, throttling 4× CPU i wolne 4G. Po 3 przebiegi na stronę, wszystkie z tym samym wynikiem.
+
+| Strona                                | Performance | Accessibility | Best Practices | SEO |
+| ------------------------------------- | :---------: | :-----------: | :------------: | :-: |
+| `/`                                   |     100     |      100      |      100       | 100 |
+| `/pl/`                                |     100     |      100      |      100       | 100 |
+| `/pl/blog/`                           |     100     |      100      |      100       | 100 |
+| `/blog/private-discord-alternative/`  |     100     |      100      |      100       | 100 |
+
+```
+Core Web Vitals (mobile)
+
+LCP   1.2 s   ██████░░░░░░░░░░░░░░  próg „dobry”: ≤ 2.5 s
+TBT   0 ms    ░░░░░░░░░░░░░░░░░░░░  próg „dobry”: ≤ 200 ms
+CLS   0       ░░░░░░░░░░░░░░░░░░░░  próg „dobry”: ≤ 0.1
+FCP   0.8 s   ████░░░░░░░░░░░░░░░░  próg „dobry”: ≤ 1.8 s
+```
+
+Co to daje:
+
+- **CSS inline** (`build.inlineStylesheets: 'always'`) — żadnego zasobu blokującego renderowanie
+- **zero JS frameworków** — menu mobilne na Popover API, jedyny skrypt to kilka linii domykających menu
+- **obrazy AVIF/WebP** w kilku szerokościach; hero z art direction (telefon na mobile, desktop od tabletu), `fetchpriority="high"`
+- **font** — jeden plik variable na zestaw znaków, `preload` + fallback z dopasowanymi metrykami (CLS = 0)
+- **`content-visibility: auto`** dla sekcji poniżej pierwszego ekranu — TBT spadło z 260 ms do 0 ms
+- `backdrop-filter` nagłówka tylko od tabletu, lżejsze cienie na mobile
+
+## SEO
+
+```
+Każda strona                         Wpis na blogu
+├─ <title> + meta description        ├─ og:type = article + article:*
+├─ canonical                         ├─ JSON-LD: BlogPosting
+├─ hreflang en-US / pl-PL / x-default├─ JSON-LD: BreadcrumbList
+├─ Open Graph + Twitter Card         ├─ link do tłumaczenia (hreflang)
+├─ og:image 1200×630                 └─ czas czytania, linki wewnętrzne
+└─ JSON-LD: WebSite, Organization
+
+Strona główna                        Globalnie
+├─ JSON-LD: SoftwareApplication      ├─ sitemap z alternatywami językowymi
+└─ JSON-LD: FAQPage                  ├─ robots.txt → sitemap
+                                     ├─ RSS: /rss.xml, /pl/rss.xml
+                                     └─ manifest + ikony (PWA-ready)
+```
+
+Frazy docelowe (EN): `private discord alternative`, `encrypted discord alternative`, `end-to-end encrypted voice chat`, `mls protocol explained`, `push to talk cuts off first word`, `safety numbers explained`.
+
+Schema wpisów pilnuje długości: `title` ≤ 70 znaków, `description` 70–170 — za długi opis przerwie build.
 
 ## Struktura
 
-- `src/views/` — widoki wspólne dla obu języków (Home, BlogIndex, BlogPost); `src/pages/` tylko je wywołuje
-- `src/layouts/Base.astro` — `<head>`: SEO, hreflang, Open Graph, Twitter Card, preload fontu
-- `src/components/` — sekcje (Hero, Features, Security, Devices, Download, News, Faq) i elementy wspólne
-- `src/site.ts` — linki (pobieranie, logowanie itd.) i identyfikatory sekcji
-- `src/styles/global.css` — tokeny kolorów; akcent zmieniasz w `--accent`
-- `src/assets/` — zrzuty ekranu aplikacji (Astro generuje z nich AVIF/WebP w kilku rozmiarach)
-- `public/og.png` — obraz Open Graph 1200×630
-
-## Wydajność
-
-Lighthouse mobile: 100 / 100 / 100 / 100 (Performance, Accessibility, Best Practices, SEO) na stronie głównej EN i PL, liście wpisów i wpisie.
-
-- bez frameworków JS; menu mobilne na Popover API, CSS wstawiony inline
-- obrazy AVIF/WebP z `srcset`, hero z art direction (telefon na mobile, desktop od tabletu)
-- font Figtree (variable, self-hosted) z preloadem i metrycznym fallbackiem
+```
+src/
+├─ i18n/ui.ts           teksty interfejsu EN + PL (te same klucze w obu)
+├─ content/blog/en|pl/  wpisy; translationKey łączy tłumaczenia
+├─ views/               Home, BlogIndex, BlogPost — wspólne dla obu języków
+├─ pages/  pages/pl/    routing; tylko wywołuje widoki
+├─ components/          sekcje strony i elementy wspólne
+├─ layouts/Base.astro   <head>: SEO, hreflang, OG, JSON-LD, preload fontu
+├─ lib/                 blog (kolekcja, tłumaczenia, czas czytania), RSS
+├─ site.ts              linki i identyfikatory sekcji
+└─ styles/global.css    tokeny kolorów (akcent: --accent)
+```
 
 ## Do uzupełnienia
 
-- domena: `SITE_URL` w `astro.config.mjs` (domyślnie `https://interpaste.dev`) — od niej zależą canonical, og:url, og:image i sitemap
-- prawdziwe linki w `src/site.ts` (`LINKS`)
-- odpowiedzi FAQ oznaczone `[TBD]` / `[DO USTALENIA]` (pomijane w danych strukturalnych)
-- zrzuty aplikacji w `src/assets/` są po polsku — dla wersji EN warto dorobić angielskie
+- domena — `SITE_URL` przy buildzie (domyślnie `https://interpaste.dev`); od niej zależą canonical, hreflang, OG, RSS i sitemap
+- prawdziwe linki pobierania i logowania — `LINKS` w `src/site.ts`
+- odpowiedzi FAQ oznaczone `[TBD]` / `[DO USTALENIA]`
+- angielskie zrzuty aplikacji w `src/assets/` dla wersji EN
