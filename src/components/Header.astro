@@ -2,8 +2,9 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import Button from './Button.astro';
-import { LINKS, SECTION, SITE } from '../site';
+import { SECTION, SITE } from '../site';
 import { LANGS, LOCALE, getLang, localePath, useT, type Lang } from '../i18n/ui';
+import { homeAnchor, route } from '../i18n/routes';
 
 interface Props {
   /** Adresy tej samej strony w innych językach (do przełącznika języka). */
@@ -13,20 +14,22 @@ interface Props {
 const { alternates } = Astro.props;
 const lang = getLang(Astro.currentLocale);
 const t = useT(lang);
-const home = localePath(lang, '/');
+const home = route(lang, 'home');
+const path = Astro.url.pathname;
 // Na stronie głównej kotwice działają lokalnie, na podstronach prowadzą do strony głównej.
-const onHome = Astro.url.pathname === home;
-const anchor = (id: string) => (onHome ? `#${id}` : `${home}#${id}`);
-const link = (href: string) => (href.startsWith('#') ? anchor(href.slice(1)) : href);
+const anchor = (id: string) => (path === home ? `#${id}` : homeAnchor(lang, id));
+const download = route(lang, 'download');
 
 const nav = [
   { label: t.nav.features, href: anchor(SECTION.features) },
-  { label: t.nav.security, href: anchor(SECTION.security) },
-  { label: t.nav.mobile, href: anchor(SECTION.mobile) },
-  { label: t.nav.blog, href: localePath(lang, '/blog/') },
-  { label: t.nav.faq, href: anchor(SECTION.faq) },
-  { label: t.nav.download, href: anchor(SECTION.download) },
+  { label: t.nav.gamers, href: route(lang, 'gamers') },
+  { label: t.nav.security, href: route(lang, 'security') },
+  { label: t.nav.blog, href: route(lang, 'blog') },
+  { label: t.nav.help, href: route(lang, 'help') },
+  { label: t.nav.download, href: download },
 ];
+// Aktywna pozycja menu: bieżąca strona albo jej podstrony (np. wpis na blogu).
+const isActive = (href: string) => !href.includes('#') && href !== home && path.startsWith(href);
 const langLinks = LANGS.map((l) => ({ lang: l, href: alternates[l] ?? localePath(l, '/') }));
 ---
 
@@ -38,7 +41,7 @@ const langLinks = LANGS.map((l) => ({ lang: l, href: alternates[l] ?? localePath
     </a>
 
     <nav aria-label="Menu" class="nav">
-      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+      {nav.map((item) => <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>)}
     </nav>
 
     <div class="actions">
@@ -51,8 +54,8 @@ const langLinks = LANGS.map((l) => ({ lang: l, href: alternates[l] ?? localePath
           ))
         }
       </nav>
-      <Button variant="outline" href={link(LINKS.login)} class="desk">{t.nav.login}</Button>
-      <Button href={link(LINKS.register)} class="desk">{t.nav.register}</Button>
+      <Button variant="outline" href={download} class="desk">{t.nav.login}</Button>
+      <Button href={download} class="desk">{t.nav.register}</Button>
     </div>
 
     <!-- Menu mobilne na Popover API: działa bez JavaScriptu. -->
@@ -67,11 +70,11 @@ const langLinks = LANGS.map((l) => ({ lang: l, href: alternates[l] ?? localePath
         </button>
       </div>
       <nav aria-label="Menu" class="sheet-nav">
-        {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+        {nav.map((item) => <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>)}
       </nav>
       <div class="sheet-actions">
-        <Button href={link(LINKS.register)} size="lg" block>{t.nav.register}</Button>
-        <Button variant="outline" href={link(LINKS.login)} size="lg" block>{t.nav.login}</Button>
+        <Button href={download} size="lg" block>{t.nav.register}</Button>
+        <Button variant="outline" href={download} size="lg" block>{t.nav.login}</Button>
       </div>
     </div>
   </div>
@@ -125,7 +128,8 @@ const langLinks = LANGS.map((l) => ({ lang: l, href: alternates[l] ?? localePath
     font-weight: 500;
     white-space: nowrap;
   }
-  .nav a:hover {
+  .nav a:hover,
+  .nav a[aria-current='page'] {
     color: var(--text);
   }
   .actions {

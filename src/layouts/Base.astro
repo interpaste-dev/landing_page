@@ -121,6 +121,7 @@ const baseLd = [
     <meta name="twitter:image:alt" content={imageAlt} />
 
     {[...baseLd, ...jsonLd].map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
+    <slot name="head" />
   </head>
   <body>
     <a class="skip" href="#main">{t.a11y.skip}</a>

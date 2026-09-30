@@ -1,0 +1,61 @@
+---
+import Icon from './Icon.astro';
+import { getLang, useT } from '../i18n/ui';
+
+export interface Crumb {
+  label: string;
+  href?: string;
+}
+interface Props {
+  items: Crumb[];
+  center?: boolean;
+}
+
+const { items, center = false } = Astro.props;
+const t = useT(getLang(Astro.currentLocale));
+---
+
+<nav class:list={['crumbs', { center }]} aria-label={t.a11y.breadcrumb}>
+  <ol>
+    {
+      items.map((c, i) => (
+        <li>
+          {i > 0 && <Icon name="chevron" size={14} color="var(--text-3)" />}
+          {c.href ? <a href={c.href}>{c.label}</a> : <span aria-current="page">{c.label}</span>}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 13.5px;
+    color: var(--text-2);
+  }
+  .center ol {
+    justify-content: center;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  a {
+    color: var(--text-2);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--text);
+  }
+  [aria-current] {
+    color: var(--text);
+  }
+</style>

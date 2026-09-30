@@ -1,0 +1,309 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Icon, { type IconName } from '../components/Icon.astro';
+import { SITE } from '../site';
+import { LOCALE, formatDate, getLang, useT } from '../i18n/ui';
+import { ROUTES, route } from '../i18n/routes';
+import { changelogCopy } from '../i18n/pages/changelog';
+import { breadcrumbLd } from '../lib/seo';
+
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang);
+const c = changelogCopy[lang];
+const site = Astro.site!;
+const rssHref = `${route(lang, 'changelog')}rss.xml`;
+const anchor = (v: string) => `v${v.replaceAll('.', '-')}`;
+const groups = ['added', 'fixed', 'security'] as const;
+
+const jsonLd = [
+  breadcrumbLd(site, [
+    { name: t.a11y.homeCrumb, path: route(lang, 'home') },
+    { name: c.crumb, path: route(lang, 'changelog') },
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: c.title,
+    inLanguage: LOCALE[lang].intl,
+    itemListElement: c.releases.map((r, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: `${SITE.name} ${r.version} — ${r.title}`,
+      url: new URL(`${route(lang, 'changelog')}#${anchor(r.version)}`, site).href,
+    })),
+  },
+];
+---
+
+<Base title={c.meta.title} description={c.meta.description} alternates={ROUTES.changelog} jsonLd={jsonLd}>
+  <link slot="head" rel="alternate" type="application/rss+xml" title={`${SITE.name} — ${c.title}`} href={rssHref} />
+  <section class="container head">
+    <Breadcrumbs items={[{ label: t.a11y.homeCrumb, href: route(lang, 'home') }, { label: c.crumb }]} />
+    <div class="head-row">
+      <div class="head-copy">
+        <h1>{c.title}</h1>
+        <p class="lead">{c.lead}</p>
+      </div>
+      <div class="head-actions">
+        <Button href={rssHref} variant="outline"><Icon name="rss" stroke={2} />{c.rss}</Button>
+        <Button href={route(lang, 'download')}><Icon name="download" stroke={2} />{`${c.download} ${SITE.version}`}</Button>
+      </div>
+    </div>
+  </section>
+
+  <section class="container releases">
+    {
+      c.releases.map((r, i) => (
+        <article class="release" id={anchor(r.version)}>
+          <div class="side">
+            <span class:list={['mono', 'ver', { latest: i === 0 }]}>v{r.version}</span>
+            <time datetime={r.date}>{formatDate(lang, new Date(r.date))}</time>
+            {i === 0 && <span class="badge">{c.latest}</span>}
+          </div>
+          <div class="card">
+            <h2>{r.title}</h2>
+            <div class="cols">
+              {groups.map((g) =>
+                r[g].length ? (
+                  <div>
+                    <span class:list={['tag', g]}>{c.groups[g]}</span>
+                    <ul>
+                      {r[g].map((item) => (
+                        <li>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null,
+              )}
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </section>
+
+  <section class="container soon">
+    <div class="side">
+      <h2>{c.soonTitle}</h2>
+    </div>
+    <ul>
+      {
+        c.soon.map((s) => (
+          <li class="card small">
+            <span class="ico">
+              <Icon name={s.icon as IconName} size={20} />
+            </span>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .head {
+    padding-top: 56px;
+    padding-bottom: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .head-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .head-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 54px;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+  .head-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .releases {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 64px;
+  }
+  .release,
+  .soon {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 24px;
+  }
+  .side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding-top: 6px;
+  }
+  .ver {
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .ver.latest {
+    color: var(--accent);
+  }
+  time {
+    font-size: 13.5px;
+    color: var(--text-3);
+  }
+  .badge {
+    margin-top: 6px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .card {
+    padding: 28px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .card h2 {
+    margin: 0 0 20px;
+    font-size: 22px;
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .tag {
+    display: inline-flex;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .tag.added {
+    background: rgb(143 194 106 / 0.14);
+    color: var(--ok);
+  }
+  .tag.fixed {
+    background: rgb(122 162 247 / 0.14);
+    color: #9db4f5;
+  }
+  .tag.security {
+    background: rgb(230 169 90 / 0.14);
+    color: var(--warn);
+  }
+  .cols ul {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cols li {
+    position: relative;
+    padding-left: 14px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--text-2);
+  }
+  .cols li::before {
+    content: '·';
+    position: absolute;
+    left: 2px;
+    color: var(--text-3);
+  }
+
+  .soon {
+    padding-top: 40px;
+    padding-bottom: 96px;
+  }
+  .soon h2 {
+    margin: 0;
+    font-size: 18px;
+  }
+  .soon ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .small {
+    padding: 22px;
+  }
+  .small h3 {
+    margin: 12px 0 6px;
+    font-size: 16px;
+  }
+  .small p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-2);
+  }
+  .ico {
+    display: flex;
+    color: var(--accent);
+  }
+
+  @media (max-width: 1000px) {
+    .release,
+    .soon {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .side {
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+    }
+    .badge {
+      margin-top: 0;
+    }
+  }
+  @media (max-width: 720px) {
+    .head {
+      padding-top: 28px;
+      padding-bottom: 28px;
+    }
+    .head-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    h1 {
+      font-size: 36px;
+    }
+    .head-actions :global(.btn) {
+      flex: 1 1 0;
+    }
+    .card {
+      padding: 20px;
+    }
+    .cols,
+    .soon ul {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .soon {
+      padding-bottom: 64px;
+    }
+  }
+</style>

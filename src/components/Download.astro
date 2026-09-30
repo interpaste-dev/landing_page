@@ -1,15 +1,18 @@
 ---
 import Icon, { type IconName } from './Icon.astro';
 import Button from './Button.astro';
-import { LINKS, SECTION } from '../site';
+import { SECTION } from '../site';
+import { route } from '../i18n/routes';
 import { getLang, useT } from '../i18n/ui';
 
-const t = useT(getLang(Astro.currentLocale)).download;
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang).download;
+const download = route(lang, 'download');
 const p = t.platforms;
 const platforms: { name: string; meta: string; icon: IconName; href?: string; cta?: string; primary?: boolean }[] = [
-  { name: 'Windows', meta: p.windows.meta, icon: 'monitor', href: LINKS.windows, cta: p.windows.cta, primary: true },
-  { name: 'Linux', meta: p.linux.meta, icon: 'chip', href: LINKS.linux, cta: p.linux.cta },
-  { name: 'Android', meta: p.android.meta, icon: 'phone', href: LINKS.android, cta: p.android.cta },
+  { name: 'Windows', meta: p.windows.meta, icon: 'monitor', href: download, cta: p.windows.cta, primary: true },
+  { name: 'Linux', meta: p.linux.meta, icon: 'chip', href: download, cta: p.linux.cta },
+  { name: 'Android', meta: p.android.meta, icon: 'phone', href: download, cta: p.android.cta },
   { name: 'iOS', meta: p.ios.meta, icon: 'phone' },
 ];
 ---

@@ -1,27 +1,27 @@
 ---
 import Logo from './Logo.astro';
 import { LINKS, SECTION, SITE } from '../site';
-import { getLang, localePath, useT } from '../i18n/ui';
+import { getLang, useT } from '../i18n/ui';
+import { homeAnchor, route } from '../i18n/routes';
 
 const lang = getLang(Astro.currentLocale);
 const t = useT(lang);
-const home = localePath(lang, '/');
 const columns = [
   {
     title: t.footer.product,
     links: [
-      { label: t.nav.features, href: `${home}#${SECTION.features}` },
-      { label: t.nav.mobile, href: `${home}#${SECTION.mobile}` },
-      { label: t.nav.download, href: `${home}#${SECTION.download}` },
-      { label: t.news.title, href: `${home}#${SECTION.news}` },
+      { label: t.nav.features, href: homeAnchor(lang, SECTION.features) },
+      { label: t.nav.gamers, href: route(lang, 'gamers') },
+      { label: t.nav.download, href: route(lang, 'download') },
+      { label: t.nav.changelog, href: route(lang, 'changelog') },
     ],
   },
   {
     title: t.footer.resources,
     links: [
-      { label: t.nav.blog, href: localePath(lang, '/blog/') },
-      { label: t.nav.security, href: `${home}#${SECTION.security}` },
-      { label: t.nav.faq, href: `${home}#${SECTION.faq}` },
+      { label: t.nav.blog, href: route(lang, 'blog') },
+      { label: t.footer.helpCenter, href: route(lang, 'help') },
+      { label: t.nav.security, href: route(lang, 'security') },
       { label: t.footer.source, href: LINKS.source },
     ],
   },
@@ -30,7 +30,7 @@ const columns = [
     links: [
       { label: t.footer.terms, href: LINKS.terms },
       { label: t.footer.privacy, href: LINKS.privacy },
-      { label: t.footer.contact, href: LINKS.contact },
+      { label: t.footer.contact, href: `${route(lang, 'help')}#contact` },
       { label: t.footer.status, href: LINKS.status },
     ],
   },

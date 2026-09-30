@@ -1,25 +1,30 @@
-// Stałe dane strony, niezależne od języka. Teksty są w src/i18n/ui.ts.
+// Stałe dane strony, niezależne od języka. Teksty są w src/i18n/, adresy podstron w src/i18n/routes.ts.
 export const SITE = {
   name: 'Komunikator',
   themeColor: '#121111',
   ogImage: '/og.png',
+  version: '0.9.2',
 };
 
 // TODO: podmienić na prawdziwe adresy, gdy będą gotowe.
 export const LINKS = {
-  login: '#download',
-  register: '#download',
-  windows: '#download',
-  linux: '#download',
-  android: '#download',
   source: 'https://github.com/interpaste-dev',
+  files: {
+    windows: '#',
+    windowsPortable: '#',
+    linux: '#',
+    android: '#',
+    olderVersions: '#',
+  },
+  selfHostGuide: '#',
   terms: '#',
   privacy: '#',
-  contact: '#',
   status: '#',
+  supportEmail: 'support@[DOMENA]',
+  securityEmail: 'security@[DOMENA]',
 };
 
-// Identyfikatory sekcji strony głównej — te same w obu językach, żeby linki się nie rozjeżdżały.
+// Identyfikatory sekcji strony głównej — te same w obu językach.
 export const SECTION = {
   features: 'features',
   security: 'security',

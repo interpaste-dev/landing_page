@@ -1,0 +1,469 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Icon from '../components/Icon.astro';
+import { LINKS } from '../site';
+import { LOCALE, getLang, useT } from '../i18n/ui';
+import { ROUTES, route } from '../i18n/routes';
+import { CATEGORY_ICONS, helpCopy, type HelpCategory } from '../i18n/pages/help';
+import { getHelp, helpUrl } from '../lib/help';
+import { breadcrumbLd } from '../lib/seo';
+
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang);
+const c = helpCopy[lang];
+const site = Astro.site!;
+const articles = await getHelp(lang);
+const popular = articles.filter((a) => a.data.popular !== undefined);
+
+const categories = (Object.keys(c.categories) as HelpCategory[]).map((key) => {
+  const inCat = articles.filter((a) => a.data.category === key);
+  return { key, ...c.categories[key], count: inCat.length, href: inCat[0] ? helpUrl(inCat[0]) : undefined };
+});
+const mailto = `mailto:${LINKS.supportEmail}`;
+
+const jsonLd = [
+  breadcrumbLd(site, [
+    { name: t.a11y.homeCrumb, path: route(lang, 'home') },
+    { name: c.crumb, path: route(lang, 'help') },
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: c.meta.title,
+    description: c.meta.description,
+    inLanguage: LOCALE[lang].intl,
+    url: new URL(route(lang, 'help'), site).href,
+    hasPart: articles.map((a) => ({ '@type': 'TechArticle', headline: a.data.title, url: new URL(helpUrl(a), site).href })),
+  },
+];
+---
+
+<Base title={c.meta.title} description={c.meta.description} alternates={ROUTES.help} jsonLd={jsonLd}>
+  <section class="hero">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <Breadcrumbs center items={[{ label: t.a11y.homeCrumb, href: route(lang, 'home') }, { label: c.crumb }]} />
+      <h1>{c.title}</h1>
+      <form class="search" role="search" action={route(lang, 'help')} method="get" id="help-search">
+        <label class="field">
+          <Icon name="search" size={18} color="var(--text-3)" />
+          <span class="sr-only">{c.searchLabel}</span>
+          <input type="search" name="q" placeholder={c.searchPlaceholder} autocomplete="off" />
+        </label>
+        <button type="submit">{c.searchButton}</button>
+      </form>
+      <p class="popular">
+        {`${c.popular} `}
+        {
+          popular.slice(0, 3).map((a, i) => (
+            <>
+              {i > 0 && ' · '}
+              <a href={helpUrl(a)}>{a.data.title}</a>
+            </>
+          ))
+        }
+      </p>
+    </div>
+  </section>
+
+  <section class="container band">
+    <h2 class="h2 small-h">{c.topicsTitle}</h2>
+    <ul class="topics">
+      {
+        categories.map((cat) => (
+          <li class="topic">
+            <span class="t-ico">
+              <Icon name={CATEGORY_ICONS[cat.key]} size={20} />
+            </span>
+            <div>
+              <h3>{cat.href ? <a href={cat.href}>{cat.name}</a> : cat.name}</h3>
+              <p>{cat.desc}</p>
+              <span class="count">{c.articles(cat.count)}</span>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="container band split">
+    <div class="list-wrap">
+      <h2 class="h2 small-h">{c.mostRead}</h2>
+      <ul class="list" id="help-list">
+        {
+          articles.map((a) => (
+            <li data-search={`${a.data.title} ${a.data.description} ${c.categories[a.data.category].name}`.toLowerCase()}>
+              <a href={helpUrl(a)}>
+                <Icon name="file" color="var(--text-3)" />
+                <span class="l-title">{a.data.title}</span>
+                <span class="l-cat">{c.categories[a.data.category].name}</span>
+                <Icon name="chevron" color="var(--text-3)" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="empty" id="help-empty" hidden>{c.noResults}</p>
+    </div>
+
+    <aside class="side" id="contact">
+      <div class="box">
+        <h2>{c.contact.title}</h2>
+        <p>{c.contact.text}</p>
+        <Button href={mailto} block><Icon name="chat" stroke={2} />{c.contact.cta}</Button>
+        <a class="mail mono" href={mailto}>{LINKS.supportEmail}</a>
+      </div>
+      <p class="warn">
+        <Icon name="alert" color="var(--warn)" />
+        <span set:html={c.warning} />
+      </p>
+      <a class="status" href={LINKS.status}>
+        <span><span class="dot" aria-hidden="true"></span>{c.status.label}</span>
+        <span class="status-v">{c.status.value}</span>
+      </a>
+    </aside>
+  </section>
+</Base>
+
+<script is:inline>
+  // Wyszukiwarka w pomocy: filtruje listę artykułów na bieżąco (bez JS formularz po prostu przeładuje stronę).
+  (function () {
+    var form = document.getElementById('help-search');
+    var list = document.getElementById('help-list');
+    var empty = document.getElementById('help-empty');
+    if (!form || !list) return;
+    var input = form.querySelector('input');
+    var rows = list.querySelectorAll('li');
+    function run() {
+      var words = input.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+      var shown = 0;
+      rows.forEach(function (row) {
+        var hit = words.every(function (w) { return row.dataset.search.indexOf(w) !== -1; });
+        row.hidden = !hit;
+        if (hit) shown++;
+      });
+      empty.hidden = shown !== 0;
+    }
+    input.addEventListener('input', run);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      run();
+      list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    var q = new URLSearchParams(location.search).get('q');
+    if (q) { input.value = q; run(); }
+  })();
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 64px 0 72px;
+  }
+  .glow {
+    position: absolute;
+    left: 50%;
+    top: -420px;
+    width: 1400px;
+    height: 800px;
+    margin-left: -700px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 62%);
+  }
+  .hero-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    text-align: center;
+  }
+  h1 {
+    margin: 0;
+    font-size: 54px;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+  .search {
+    width: min(720px, 100%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 6px 16px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+  }
+  .search:focus-within {
+    border-color: var(--accent-line);
+  }
+  .field {
+    flex: 1 1 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  input {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 44px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text);
+    font-size: 16px;
+  }
+  input::placeholder {
+    color: var(--text-3);
+  }
+  .search button {
+    height: 44px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .popular {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-3);
+  }
+  .popular a {
+    text-decoration: none;
+  }
+
+  .band {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+  .small-h {
+    font-size: 28px;
+  }
+  .topics {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .topic {
+    position: relative;
+    display: flex;
+    gap: 16px;
+    padding: 22px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .topic:hover {
+    border-color: var(--line-strong);
+  }
+  .t-ico {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .topic h3 {
+    margin: 0 0 4px;
+    font-size: 17px;
+  }
+  .topic h3 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .topic h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .topic p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-2);
+  }
+  .count {
+    display: block;
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--text-3);
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 32px;
+    align-items: start;
+    padding-bottom: 96px;
+  }
+  .list {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .list li + li {
+    border-top: 1px solid var(--line);
+  }
+  .list a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .list a:hover .l-title {
+    color: var(--accent);
+  }
+  .l-title {
+    flex: 1 1 0;
+    font-weight: 500;
+  }
+  .l-cat {
+    font-size: 13px;
+    color: var(--text-3);
+    white-space: nowrap;
+  }
+  .empty {
+    margin: 16px 0 0;
+    color: var(--text-2);
+  }
+
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 58px;
+  }
+  .box {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .box h2 {
+    margin: 0;
+    font-size: 19px;
+  }
+  .box p {
+    margin: 0 0 4px;
+    font-size: 14.5px;
+    color: var(--text-2);
+  }
+  .mail {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+    font-size: 13.5px;
+    text-decoration: none;
+  }
+  .warn {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 16px 18px;
+    border-radius: 14px;
+    border: 1px solid rgb(230 169 90 / 0.35);
+    background: rgb(230 169 90 / 0.08);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-2);
+  }
+  .warn :global(svg) {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .warn :global(strong) {
+    color: var(--text);
+  }
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-weight: 600;
+    font-size: 14.5px;
+    text-decoration: none;
+  }
+  .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: var(--ok);
+  }
+  .status-v {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-3);
+  }
+
+  @media (max-width: 1100px) {
+    .topics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .split {
+      grid-template-columns: 1fr;
+    }
+    .side {
+      padding-top: 0;
+    }
+  }
+  @media (max-width: 720px) {
+    .hero {
+      padding: 32px 0 32px;
+    }
+    h1 {
+      font-size: 34px;
+    }
+    .search button {
+      padding: 0 14px;
+    }
+    .band {
+      padding-top: 28px;
+      padding-bottom: 28px;
+    }
+    .topics {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .topic {
+      padding: 16px;
+    }
+    .l-cat {
+      display: none;
+    }
+    .split {
+      padding-bottom: 64px;
+    }
+  }
+</style>

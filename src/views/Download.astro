@@ -1,0 +1,469 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Icon, { type IconName } from '../components/Icon.astro';
+import { LINKS, SITE } from '../site';
+import { LOCALE, getLang, useT } from '../i18n/ui';
+import { ROUTES, route } from '../i18n/routes';
+import { downloadCopy } from '../i18n/pages/download';
+import { breadcrumbLd } from '../lib/seo';
+
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang);
+const c = downloadCopy[lang];
+const site = Astro.site!;
+const v = SITE.version;
+
+const icons: Record<string, IconName> = { windows: 'monitor', linux: 'chip', android: 'phone', macos: 'apple', ios: 'phone' };
+const files: Record<string, string | undefined> = { linux: LINKS.files.linux, android: LINKS.files.android };
+// Dane dla skryptu wykrywającego system (podmienia kartę „Wykryliśmy Twój system”).
+const detect = Object.fromEntries(
+  (['windows', 'linux', 'android'] as const).map((k) => [k, { ...c.platforms[k], href: LINKS.files[k] }]),
+);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: SITE.name,
+    applicationCategory: 'CommunicationApplication',
+    operatingSystem: 'Windows 10, Windows 11, Linux, Android 9+',
+    softwareVersion: v,
+    inLanguage: LOCALE[lang].intl,
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    url: new URL(route(lang, 'download'), site).href,
+    releaseNotes: new URL(route(lang, 'changelog'), site).href,
+  },
+  breadcrumbLd(site, [
+    { name: t.a11y.homeCrumb, path: route(lang, 'home') },
+    { name: t.nav.download, path: route(lang, 'download') },
+  ]),
+];
+---
+
+<Base title={c.meta.title} description={c.meta.description} alternates={ROUTES.download} jsonLd={jsonLd}>
+  <section class="hero">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">{c.eyebrow}</span>
+        <h1>{c.titleA}<br />{c.titleB}</h1>
+        <p class="lead">{c.lead}</p>
+      </div>
+
+      <div class="detect" id="detect" data-platforms={JSON.stringify(detect)}>
+        <div class="detect-top">
+          <span class="detect-ico"><Icon name="monitor" size={22} /></span>
+          <div>
+            <span class="small">{c.detected}</span>
+            <strong data-os>{c.platforms.windows.os}</strong>
+          </div>
+        </div>
+        <Button href={LINKS.files.windows} size="lg" block data-cta>
+          <Icon name="download" stroke={2} /><span data-cta-label>{c.platforms.windows.cta}</span>
+        </Button>
+        <div class="detect-meta">
+          <span>{c.version} {v} · {c.fileSize}</span>
+          <a href="#checksums">{c.checksum}</a>
+        </div>
+        <div class="detect-links">
+          <a href={LINKS.files.windowsPortable}>{c.portable}</a>
+          <a href={LINKS.files.olderVersions}>{c.older}</a>
+          <a href={route(lang, 'changelog')}>{c.changelog}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container band">
+    <h2 class="h2 small-h">{c.othersTitle}</h2>
+    <ul class="others">
+      {
+        c.others.map((o) => (
+          <li class="card">
+            <span class="o-ico">
+              <Icon name={icons[o.key]} size={22} />
+            </span>
+            <div>
+              <h3>{o.name}</h3>
+              <span class="meta">{o.meta}</span>
+            </div>
+            {o.cta ? (
+              <Button href={files[o.key]} variant="muted" block aria-label={`${o.cta} — ${o.name}`}>
+                <Icon name="download" stroke={2} />
+                {o.cta}
+              </Button>
+            ) : (
+              <span class="soon">{c.soon}</span>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id="checksums" class="container band split">
+    <div class="split-copy">
+      <h2 class="h2 small-h">{c.verify.title}</h2>
+      <p class="lead">{c.verify.text}</p>
+    </div>
+    <div class="codes">
+      <pre><code><span class="cm">{c.verify.cmdComment}</span>
+Get-FileHash .\Komunikator-{v}.exe -Algorithm SHA256</code></pre>
+      <pre><code><span class="cm">{c.verify.expected}</span>
+Komunikator-{v}.exe       {c.verify.placeholder}
+Komunikator-{v}.AppImage  {c.verify.placeholder}</code></pre>
+    </div>
+  </section>
+
+  <section class="container band">
+    <h2 class="h2 small-h">{c.reqTitle}</h2>
+    <div class="req">
+      {
+        c.req.map((r) => (
+          <div class="card">
+            <h3>{r.name}</h3>
+            <dl>
+              {r.rows.map(([k, val]) => (
+                <div>
+                  <dt>{k}</dt>
+                  <dd>{val}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="self-hosting" class="container band">
+    <div class="self">
+      <div class="self-copy">
+        <span class="o-ico accent"><Icon name="server" size={24} /></span>
+        <h2 class="h2 small-h">{c.self.title}</h2>
+        <p>{c.self.text}</p>
+        <a href={LINKS.selfHostGuide}>{c.self.guide}</a>
+      </div>
+      <pre><code><span class="cm">{c.self.comment}</span>
+<span class="k">services:</span>
+  <span class="k">komunikator:</span>
+    image: {c.self.image}:{v}
+    ports: ["443:443"]
+    volumes: ["./data:/var/lib/komunikator"]</code></pre>
+    </div>
+  </section>
+</Base>
+
+<script is:inline>
+  // Podmienia kartę „Wykryliśmy Twój system” na Linux albo Androida. Bez JS zostaje Windows.
+  (function () {
+    var el = document.getElementById('detect');
+    if (!el) return;
+    var ua = navigator.userAgent;
+    var key = /Android/i.test(ua) ? 'android' : /Linux|X11/.test(ua) ? 'linux' : null;
+    if (!key) return;
+    var p = JSON.parse(el.dataset.platforms)[key];
+    el.querySelector('[data-os]').textContent = p.os;
+    el.querySelector('[data-cta-label]').textContent = p.cta;
+    el.querySelector('[data-cta]').setAttribute('href', p.href);
+  })();
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 88px 0 72px;
+  }
+  .glow {
+    position: absolute;
+    left: -300px;
+    top: -200px;
+    width: 900px;
+    height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 62%);
+  }
+  .hero-inner {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 48px;
+  }
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 560px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 60px;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+  }
+  .detect {
+    width: 620px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 28px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--accent-line);
+  }
+  .detect-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .detect-top div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .detect-top strong {
+    font-size: 22px;
+  }
+  .detect-ico {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .small {
+    font-size: 13px;
+    color: var(--text-3);
+  }
+  .detect-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 16px;
+    font-size: 13.5px;
+    color: var(--text-3);
+  }
+  .detect-meta a,
+  .detect-links a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .detect-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
+
+  .band {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+  .small-h {
+    font-size: 30px;
+  }
+  .card {
+    padding: 22px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .card h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+  .others {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .others li {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .o-ico {
+    display: flex;
+    color: var(--text-2);
+  }
+  .o-ico.accent {
+    color: var(--accent);
+  }
+  .meta {
+    font-size: 13.5px;
+    color: var(--text-3);
+  }
+  .soon {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--surface-2);
+    color: var(--text-3);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .split {
+    display: flex;
+    gap: 48px;
+  }
+  .split-copy {
+    width: 460px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .split-copy .lead {
+    font-size: 16px;
+  }
+  .codes {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  pre {
+    margin: 0;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: var(--bg-deep);
+    border: 1px solid var(--line);
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .cm {
+    color: var(--text-3);
+  }
+  .k {
+    color: var(--accent);
+  }
+
+  .req {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  dl {
+    margin: 16px 0 0;
+  }
+  dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+    font-size: 14.5px;
+  }
+  dt {
+    color: var(--text-3);
+  }
+  dd {
+    margin: 0;
+    text-align: right;
+    font-weight: 500;
+  }
+
+  .self {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+    border-radius: 24px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .self-copy {
+    width: 400px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .self-copy p {
+    margin: 0;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+  .self-copy a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .self pre {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  @media (max-width: 1100px) {
+    .hero-inner,
+    .split,
+    .self {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .detect,
+    .split-copy,
+    .self-copy {
+      width: 100%;
+    }
+    .others {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .req {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 720px) {
+    .hero {
+      padding: 40px 0 24px;
+    }
+    h1 {
+      font-size: 38px;
+    }
+    .hero-inner {
+      gap: 28px;
+    }
+    .detect {
+      padding: 20px;
+    }
+    .band {
+      padding-top: 36px;
+      padding-bottom: 36px;
+    }
+    .small-h {
+      font-size: 24px;
+    }
+    .self {
+      padding: 22px;
+      gap: 24px;
+    }
+    pre {
+      font-size: 12.5px;
+    }
+  }
+  @media (max-width: 420px) {
+    .others {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

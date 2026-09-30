@@ -2,12 +2,15 @@
 import Icon, { type IconName } from './Icon.astro';
 import Button from './Button.astro';
 import { SECTION } from '../site';
-import { formatDate, getLang, localePath, useT } from '../i18n/ui';
+import { formatDate, getLang, useT } from '../i18n/ui';
+import { route } from '../i18n/routes';
+import { changelogCopy } from '../i18n/pages/changelog';
 import { getPosts, postUrl } from '../lib/blog';
 
 const lang = getLang(Astro.currentLocale);
 const t = useT(lang);
-const release = { version: 'v0.9.2', date: new Date('2026-09-22'), ...t.news.release };
+const latest = changelogCopy[lang].releases[0];
+const release = { version: `v${latest.version}`, date: new Date(latest.date), title: latest.title, items: [...latest.added, ...latest.security].slice(0, 3) };
 
 const look: Record<string, { tone: 'ok' | 'accent'; icon: IconName }> = {
   security: { tone: 'ok', icon: 'shield' },
@@ -15,7 +18,7 @@ const look: Record<string, { tone: 'ok' | 'accent'; icon: IconName }> = {
   product: { tone: 'accent', icon: 'lock' },
 };
 const posts = (await getPosts(lang)).slice(0, 3);
-const blogHref = localePath(lang, '/blog/');
+const blogHref = route(lang, 'blog');
 ---
 
 <section id={SECTION.news} class="container news">
@@ -26,6 +29,7 @@ const blogHref = localePath(lang, '/blog/');
     </div>
     <div class="links">
       <Button variant="outline" href={blogHref}>{t.news.allPosts}</Button>
+      <Button variant="muted" href={route(lang, 'changelog')}>{t.news.changelog}</Button>
     </div>
   </div>
 

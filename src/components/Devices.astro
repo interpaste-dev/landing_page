@@ -7,14 +7,7 @@ import { SECTION } from '../site';
 import { getLang, useT } from '../i18n/ui';
 
 const t = useT(getLang(Astro.currentLocale)).devices;
-const phoneProps = {
-  formats: ['avif', 'webp'] as const,
-  fallbackFormat: 'webp' as const,
-  widths: [312, 468, 624],
-  sizes: '(max-width: 720px) 45vw, 312px',
-  loading: 'lazy' as const,
-  decoding: 'async' as const,
-};
+
 ---
 
 <section id={SECTION.mobile} class="container devices">
@@ -40,10 +33,28 @@ const phoneProps = {
   </div>
   <div class="phones">
     <div class="phone">
-      <Picture src={mobileChats} alt={t.altChats} {...phoneProps} />
+      <Picture
+        src={mobileChats}
+        alt={t.altChats}
+        formats={['avif', 'webp']}
+        fallbackFormat="webp"
+        widths={[312, 468, 624]}
+        sizes="(max-width: 720px) 45vw, 312px"
+        loading="lazy"
+        decoding="async"
+      />
     </div>
     <div class="phone offset">
-      <Picture src={mobileVoice} alt={t.altVoice} {...phoneProps} />
+      <Picture
+        src={mobileVoice}
+        alt={t.altVoice}
+        formats={['avif', 'webp']}
+        fallbackFormat="webp"
+        widths={[312, 468, 624]}
+        sizes="(max-width: 720px) 45vw, 312px"
+        loading="lazy"
+        decoding="async"
+      />
     </div>
   </div>
 </section>

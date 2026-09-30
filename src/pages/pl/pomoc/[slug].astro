@@ -1,0 +1,14 @@
+---
+import type { GetStaticPaths } from 'astro';
+import HelpArticle from '../../../views/HelpArticle.astro';
+import { getHelp, helpSlug, type HelpArticle as Article } from '../../../lib/help';
+
+export const getStaticPaths = (async () => {
+  const articles = await getHelp('pl');
+  return articles.map((article) => ({ params: { slug: helpSlug(article) }, props: { article } }));
+}) satisfies GetStaticPaths;
+
+const { article } = Astro.props as { article: Article };
+---
+
+<HelpArticle article={article} />

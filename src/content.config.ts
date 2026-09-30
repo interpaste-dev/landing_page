@@ -17,4 +17,19 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+// Artykuły centrum pomocy: src/content/help/<język>/<slug>.md.
+const help = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/help' }),
+  schema: z.object({
+    title: z.string().max(70),
+    description: z.string().min(70).max(170),
+    category: z.enum(['account', 'backup', 'verification', 'voice', 'servers', 'selfhost']),
+    translationKey: z.string(),
+    updatedDate: z.coerce.date(),
+    appliesTo: z.string(),
+    /** Pozycja na liście „Najczęściej czytane” (mniejsza = wyżej); brak = poza listą. */
+    popular: z.number().optional(),
+  }),
+});
+
+export const collections = { blog, help };
