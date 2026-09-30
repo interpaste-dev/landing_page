@@ -1,0 +1,174 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import Button from './Button.astro';
+import { LINKS, NAV, SITE } from '../site';
+---
+
+<header class="header">
+  <div class="container inner">
+    <a href="/" class="brand" aria-label={`${SITE.name} — strona główna`}>
+      <Logo />
+      <span>{SITE.name}</span>
+    </a>
+
+    <nav aria-label="Menu główne" class="nav">
+      {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
+
+    <div class="actions">
+      <Button variant="outline" href={LINKS.login}>Zaloguj</Button>
+      <Button href={LINKS.register}>Załóż konto</Button>
+    </div>
+
+    <!-- Menu mobilne na Popover API: działa bez JavaScriptu. -->
+    <button class="burger" popovertarget="mobile-menu" aria-label="Otwórz menu">
+      <Icon name="menu" size={20} stroke={2} />
+    </button>
+    <div id="mobile-menu" popover class="sheet">
+      <div class="sheet-top">
+        <span class="brand"><Logo />{SITE.name}</span>
+        <button class="burger" popovertarget="mobile-menu" popovertargetaction="hide" aria-label="Zamknij menu">
+          <Icon name="close" size={20} stroke={2} />
+        </button>
+      </div>
+      <nav aria-label="Menu mobilne" class="sheet-nav">
+        {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+      </nav>
+      <div class="sheet-actions">
+        <Button href={LINKS.register} size="lg" block>Załóż konto</Button>
+        <Button variant="outline" href={LINKS.login} size="lg" block>Zaloguj</Button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  // Zamyka menu mobilne po kliknięciu w link kotwicy (bez tego popover zostaje otwarty).
+  document.getElementById('mobile-menu')?.addEventListener('click', (e) => {
+    if (e.target instanceof Element && e.target.closest('a')) e.currentTarget.hidePopover?.();
+  });
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--line);
+    background: rgb(18 17 17 / 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .inner {
+    height: 76px;
+    display: flex;
+    align-items: center;
+    gap: 36px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav {
+    display: flex;
+    gap: 26px;
+    font-size: 14.5px;
+  }
+  .nav a {
+    color: var(--text-2);
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .nav a:hover {
+    color: var(--text);
+  }
+  .actions {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+  }
+  .burger {
+    display: none;
+    margin-left: auto;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .sheet {
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0 16px 24px;
+    border: 0;
+    background: var(--bg);
+    color: var(--text);
+    flex-direction: column;
+  }
+  .sheet:popover-open {
+    display: flex;
+  }
+  .sheet-top {
+    height: 64px;
+    display: flex;
+    align-items: center;
+  }
+  .sheet-nav {
+    display: flex;
+    flex-direction: column;
+    padding-top: 12px;
+  }
+  .sheet-nav a {
+    padding: 16px 4px;
+    border-bottom: 1px solid var(--line);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .sheet-actions {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  @media (max-width: 1100px) {
+    .nav {
+      display: none;
+    }
+    .burger {
+      display: inline-flex;
+      margin-left: 0;
+    }
+    .sheet-top .burger {
+      margin-left: auto;
+    }
+  }
+  @media (max-width: 720px) {
+    .inner {
+      height: 64px;
+    }
+    .actions {
+      display: none;
+    }
+    .inner > .burger {
+      margin-left: auto;
+    }
+  }
+</style>

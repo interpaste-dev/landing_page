@@ -1,0 +1,140 @@
+---
+import Logo from './Logo.astro';
+import { LINKS, SITE } from '../site';
+
+const columns = [
+  {
+    title: 'Produkt',
+    links: [
+      { label: 'Funkcje', href: '#funkcje' },
+      { label: 'Na telefonie', href: '#urzadzenia' },
+      { label: 'Pobierz', href: '#pobierz' },
+      { label: 'Nowości', href: '#nowosci' },
+    ],
+  },
+  {
+    title: 'Zasoby',
+    links: [
+      { label: 'Bezpieczeństwo', href: '#bezpieczenstwo' },
+      { label: 'Częste pytania', href: '#faq' },
+      { label: 'Kod źródłowy', href: LINKS.source },
+    ],
+  },
+  {
+    title: 'Informacje',
+    links: [
+      { label: 'Regulamin', href: LINKS.terms },
+      { label: 'Prywatność', href: LINKS.privacy },
+      { label: 'Kontakt', href: LINKS.contact },
+      { label: 'Status serwera', href: LINKS.status },
+    ],
+  },
+];
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="top">
+      <div class="about">
+        <span class="brand"><Logo size={24} />{SITE.name}</span>
+        <p>Prywatny komunikator dla drużyn i znajomych. Szyfrowanie end-to-end MLS.</p>
+      </div>
+      {
+        columns.map((c) => (
+          <nav class="col" aria-label={c.title}>
+            <h2>{c.title}</h2>
+            {c.links.map((l) => (
+              <a href={l.href}>{l.label}</a>
+            ))}
+          </nav>
+        ))
+      }
+    </div>
+    <div class="bottom">
+      <span>© {year} {SITE.name} · open source</span>
+      <span>MLS RFC 9420</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line);
+    padding: 56px 0 36px;
+    font-size: 14px;
+    color: var(--text-3);
+  }
+  .top {
+    display: flex;
+    gap: 64px;
+    padding-bottom: 40px;
+  }
+  .about {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+  }
+  .about p {
+    margin: 0;
+    max-width: 300px;
+    line-height: 1.55;
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 160px;
+  }
+  h2 {
+    margin: 0 0 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .col a {
+    padding: 4px 0;
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 14.5px;
+  }
+  .col a:hover {
+    color: var(--text);
+  }
+  .bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  @media (max-width: 900px) {
+    .top {
+      flex-wrap: wrap;
+      gap: 32px;
+    }
+    .about {
+      flex-basis: 100%;
+    }
+    .col {
+      min-width: 0;
+      flex: 1 1 140px;
+    }
+    .col a {
+      padding: 8px 0;
+    }
+  }
+</style>

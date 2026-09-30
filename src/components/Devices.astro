@@ -1,0 +1,168 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import mobileChats from '../assets/app-mobile-chats.png';
+import mobileVoice from '../assets/app-mobile-voice.png';
+
+const points = [
+  { title: 'Powiadomienia bez treści', text: 'Na ekranie blokady widać tylko, że coś przyszło.' },
+  { title: 'Odblokowanie odciskiem palca', text: 'Lokalna baza kluczy jest zaszyfrowana PIN-em.' },
+  { title: 'Dołączanie do głosu jednym dotknięciem', text: 'Push-to-talk także na telefonie.' },
+];
+const phoneProps = {
+  formats: ['avif', 'webp'] as const,
+  fallbackFormat: 'webp' as const,
+  widths: [312, 468, 624],
+  sizes: '(max-width: 720px) 45vw, 312px',
+  loading: 'lazy' as const,
+  decoding: 'async' as const,
+};
+---
+
+<section id="urzadzenia" class="container devices">
+  <div class="copy">
+    <span class="eyebrow">Na telefonie</span>
+    <h2 class="h2">Gra na PC,<br />rozmowa w kieszeni.</h2>
+    <p class="lead">
+      Te same serwery i rozmowy na telefonie. Każde urządzenie ma własne klucze, więc zgubiony telefon wylogujesz
+      jednym kliknięciem.
+    </p>
+    <ul class="points">
+      {
+        points.map((p) => (
+          <li>
+            <span class="tick">
+              <Icon name="check" size={15} stroke={2.6} />
+            </span>
+            <div>
+              <strong>{p.title}</strong>
+              <span>{p.text}</span>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+  <div class="phones">
+    <div class="phone">
+      <Picture src={mobileChats} alt="Aplikacja mobilna: lista serwerów i rozmów" {...phoneProps} />
+    </div>
+    <div class="phone offset">
+      <Picture src={mobileVoice} alt="Aplikacja mobilna: kanał głosowy z przyciskiem push-to-talk" {...phoneProps} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .devices {
+    padding-top: 120px;
+    padding-bottom: 120px;
+    display: flex;
+    align-items: center;
+    gap: 80px;
+  }
+  .copy {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .lead {
+    max-width: 520px;
+  }
+  .points {
+    list-style: none;
+    margin: 0;
+    padding: 10px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .points li {
+    display: flex;
+    gap: 14px;
+  }
+  .points div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .points strong {
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .points span:not(.tick) {
+    font-size: 15px;
+    color: var(--text-2);
+  }
+  .tick {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .phones {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .phone {
+    width: 332px;
+    flex-shrink: 0;
+    padding: 10px;
+    border-radius: 48px;
+    background: #050505;
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 30px 80px rgb(0 0 0 / 0.55);
+  }
+  .phone :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: 38px;
+  }
+  .offset {
+    margin-top: 80px;
+  }
+
+  @media (max-width: 1240px) {
+    .devices {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 56px;
+    }
+    .phones {
+      align-self: center;
+    }
+  }
+  @media (max-width: 720px) {
+    .devices {
+      padding-top: 72px;
+      padding-bottom: 72px;
+      gap: 40px;
+    }
+    .phones {
+      width: 100%;
+      gap: 12px;
+      justify-content: center;
+    }
+    .phone {
+      width: auto;
+      flex: 1 1 0;
+      max-width: 200px;
+      padding: 5px;
+      border-radius: 28px;
+    }
+    .phone :global(img) {
+      border-radius: 23px;
+    }
+    .offset {
+      margin-top: 40px;
+    }
+  }
+</style>

@@ -1,0 +1,130 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+import Button from './Button.astro';
+import { LINKS } from '../site';
+
+const platforms: { name: string; meta: string; icon: IconName; href?: string; cta?: string; primary?: boolean }[] = [
+  { name: 'Windows', meta: 'Windows 10 i 11 · 64-bit', icon: 'monitor', href: LINKS.windows, cta: 'Pobierz .exe', primary: true },
+  { name: 'Linux', meta: 'AppImage · .deb', icon: 'chip', href: LINKS.linux, cta: 'Pobierz' },
+  { name: 'Android', meta: 'Android 9+', icon: 'phone', href: LINKS.android, cta: 'Pobierz APK' },
+  { name: 'iOS', meta: 'w przygotowaniu', icon: 'phone' },
+];
+---
+
+<section id="pobierz" class="container download">
+  <div class="section-head">
+    <span class="eyebrow">Pobierz</span>
+    <h2 class="h2">Zacznij w dwie minuty.</h2>
+    <p class="lead">Za darmo. Bez reklam. Możesz też postawić własny serwer.</p>
+  </div>
+  <ul class="grid">
+    {
+      platforms.map((p) => (
+        <li class:list={['card', { primary: p.primary }]}>
+          <span class="ico">
+            <Icon name={p.icon} size={28} />
+          </span>
+          <div class="meta">
+            <h3>{p.name}</h3>
+            <span>{p.meta}</span>
+          </div>
+          {p.href ? (
+            <Button href={p.href} variant={p.primary ? 'primary' : 'muted'} block aria-label={`${p.cta} — ${p.name}`}>
+              <Icon name="download" stroke={2} />
+              {p.cta}
+            </Button>
+          ) : (
+            <span class="soon">Wkrótce</span>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .download {
+    padding-top: 120px;
+    padding-bottom: 120px;
+  }
+  .grid {
+    list-style: none;
+    margin: 48px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 24px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .card.primary {
+    border-color: var(--accent-line);
+  }
+  .ico {
+    display: flex;
+    color: var(--text-2);
+  }
+  .primary .ico {
+    color: var(--accent);
+  }
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .meta span {
+    font-size: 13.5px;
+    color: var(--text-3);
+  }
+  .soon {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--surface-2);
+    color: var(--text-3);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 1000px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 720px) {
+    .download {
+      padding-top: 72px;
+      padding-bottom: 72px;
+    }
+    .section-head {
+      align-items: flex-start;
+      text-align: left;
+    }
+    .grid {
+      margin-top: 28px;
+      gap: 12px;
+    }
+    .card {
+      padding: 18px;
+    }
+  }
+  @media (max-width: 420px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

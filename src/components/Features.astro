@@ -1,0 +1,117 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+
+const features: { icon: IconName; title: string; text: string }[] = [
+  { icon: 'lock', title: 'Szyfrowanie wszystkiego', text: 'Wiadomości, pliki, reakcje i rozmowy głosowe. Klucze powstają na Twoim urządzeniu.' },
+  { icon: 'speaker', title: 'Głos z niskim opóźnieniem', text: 'Opus 48 kHz, push-to-talk, redukcja szumów i udostępnianie ekranu w 60 FPS.' },
+  { icon: 'bolt', title: 'Lekki klient', text: 'Około 40 MB RAM. Nie zabiera klatek w grze i działa na starszym sprzęcie.' },
+  { icon: 'gamepad', title: 'Overlay w grze', text: 'Kto mówi, szybka odpowiedź i powiadomienia bez treści — bez wychodzenia z gry.' },
+  { icon: 'palette', title: 'Twój wygląd', text: 'Motywy, kolor akcentu, gęstość i własne nazwy kontaktów. Zostają lokalnie.' },
+  { icon: 'shield', title: 'Weryfikacja urządzeń', text: 'Numery bezpieczeństwa i kod QR. Ostrzeżemy, gdy czyjś klucz się zmieni.' },
+];
+---
+
+<section id="funkcje" class="container features">
+  <div class="section-head">
+    <span class="eyebrow">Funkcje</span>
+    <h2 class="h2">Jak Discord. Tylko prywatnie.</h2>
+    <p class="lead">Wszystko, czego używacie na co dzień — bez oddawania treści rozmów komukolwiek.</p>
+  </div>
+  <ul class="grid">
+    {
+      features.map((f) => (
+        <li class="card">
+          <span class="ico">
+            <Icon name={f.icon} size={22} />
+          </span>
+          <div>
+            <h3>{f.title}</h3>
+            <p>{f.text}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .features {
+    padding-top: 60px;
+    padding-bottom: 120px;
+  }
+  .section-head .lead {
+    max-width: 620px;
+  }
+  .grid {
+    list-style: none;
+    margin: 48px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 26px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .ico {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  h3 {
+    margin: 0 0 8px;
+    font-size: 19px;
+    font-weight: 600;
+  }
+  p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text-2);
+  }
+
+  @media (max-width: 1000px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 720px) {
+    .features {
+      padding-top: 48px;
+      padding-bottom: 72px;
+    }
+    .section-head {
+      align-items: flex-start;
+      text-align: left;
+    }
+    .grid {
+      margin-top: 28px;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .card {
+      flex-direction: row;
+      padding: 18px;
+    }
+    .ico {
+      width: 40px;
+      height: 40px;
+    }
+    h3 {
+      font-size: 17px;
+      margin-bottom: 4px;
+    }
+  }
+</style>

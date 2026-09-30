@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Features from '../components/Features.astro';
+import Security from '../components/Security.astro';
+import Devices from '../components/Devices.astro';
+import Download from '../components/Download.astro';
+import News from '../components/News.astro';
+import Faq from '../components/Faq.astro';
+import { FAQ, SITE } from '../site';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: SITE.name,
+    description: SITE.description,
+    applicationCategory: 'CommunicationApplication',
+    operatingSystem: 'Windows 10, Windows 11, Linux, Android 9+',
+    softwareVersion: '0.9.2',
+    inLanguage: SITE.lang,
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'PLN' },
+    featureList: [
+      'Szyfrowanie end-to-end (MLS, RFC 9420)',
+      'Kanały głosowe z niskim opóźnieniem (Opus 48 kHz)',
+      'Udostępnianie ekranu 1440p 60 FPS',
+      'Overlay w grze',
+      'Własny serwer (self-hosting)',
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    // Pytania z odpowiedziami „do ustalenia” pomijamy, żeby nie trafiły do wyników wyszukiwania.
+    mainEntity: FAQ.filter((f) => !f.a.includes('DO USTALENIA')).map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+---
+
+<Base jsonLd={jsonLd}>
+  <Hero />
+  <Features />
+  <Security />
+  <Devices />
+  <Download />
+  <News />
+  <Faq />
+</Base>

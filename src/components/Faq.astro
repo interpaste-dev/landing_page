@@ -1,0 +1,94 @@
+---
+import Icon from './Icon.astro';
+import { FAQ } from '../site';
+---
+
+<section id="faq" class="container faq">
+  <h2 class="h2">Częste pytania</h2>
+  <div class="list">
+    {
+      FAQ.map((item, i) => (
+        <details open={i === 0}>
+          <summary>
+            {item.q}
+            <Icon name="plus" size={18} stroke={2} class="toggle" />
+          </summary>
+          <p>{item.a}</p>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .faq {
+    padding-top: 60px;
+    padding-bottom: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+  .h2 {
+    text-align: center;
+  }
+  .list {
+    width: min(820px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  details {
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary :global(.toggle) {
+    flex-shrink: 0;
+    color: var(--text-3);
+    transition: transform 0.2s;
+  }
+  details[open] summary :global(.toggle) {
+    transform: rotate(45deg);
+  }
+  p {
+    margin: 0;
+    padding: 0 24px 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-2);
+  }
+
+  @media (max-width: 720px) {
+    .faq {
+      padding-top: 24px;
+      padding-bottom: 72px;
+      align-items: stretch;
+      gap: 22px;
+    }
+    .h2 {
+      text-align: left;
+    }
+    summary {
+      padding: 16px 18px;
+      font-size: 16px;
+    }
+    p {
+      padding: 0 18px 16px;
+    }
+  }
+</style>

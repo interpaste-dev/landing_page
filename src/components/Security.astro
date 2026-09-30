@@ -1,0 +1,231 @@
+---
+import Icon from './Icon.astro';
+
+const rows = [
+  { label: 'Treść wiadomości i plików', verdict: 'nie widzi', ok: true },
+  { label: 'Rozmowy głosowe', verdict: 'nie słyszy', ok: true },
+  { label: 'Nazwy kanałów i opisy', verdict: 'nie widzi', ok: true },
+  { label: 'Kto jest w grupie i kiedy był online', verdict: 'widzi (metadane)', ok: false },
+];
+---
+
+<section id="bezpieczenstwo" class="container">
+  <div class="panel">
+    <div class="section-head">
+      <span class="eyebrow">Bezpieczeństwo</span>
+      <h2 class="h2">Serwer widzi tylko szum.</h2>
+      <p class="lead">
+        Wiadomość jest szyfrowana, zanim opuści Twój komputer. Serwer tylko ją przekazuje — nie ma kluczy, żeby ją
+        otworzyć.
+      </p>
+    </div>
+
+    <ol class="flow" aria-label="Droga wiadomości">
+      <li class="node accent">
+        <span class="node-ico"><Icon name="monitor" size={26} /></span>
+        <strong>Twoje urządzenie</strong>
+        <span class="msg">„o 20 gramy?”</span>
+        <span class="note">szyfruje kluczem grupy</span>
+      </li>
+      <li class="arrow" aria-hidden="true"><span></span><Icon name="chevron" size={22} /></li>
+      <li class="node">
+        <span class="node-ico muted"><Icon name="server" size={26} /></span>
+        <strong>Serwer</strong>
+        <span class="mono cipher">8f3a·c21e·9b07·44d1·e6f0…</span>
+        <span class="note">przekazuje szyfrogram</span>
+      </li>
+      <li class="arrow" aria-hidden="true"><span></span><Icon name="chevron" size={22} /></li>
+      <li class="node accent">
+        <span class="node-ico"><Icon name="users" size={26} /></span>
+        <strong>Urządzenia znajomych</strong>
+        <span class="msg">„o 20 gramy?”</span>
+        <span class="note">odszyfrowują lokalnie</span>
+      </li>
+    </ol>
+
+    <div class="table">
+      <h3>Co widzi nasz serwer</h3>
+      <ul>
+        {
+          rows.map((r) => (
+            <li>
+              <span>{r.label}</span>
+              <span class:list={['verdict', { warn: !r.ok }]}>
+                <Icon name={r.ok ? 'eyeOff' : 'users'} />
+                {r.verdict}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .panel {
+    padding: 72px 64px;
+    border-radius: 28px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .section-head .lead {
+    max-width: 660px;
+  }
+  .flow {
+    list-style: none;
+    margin: 48px 0 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .node {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 28px 22px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    text-align: center;
+  }
+  .node.accent {
+    border-color: var(--accent-line);
+  }
+  .node-ico {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--surface-2);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .node-ico.muted {
+    color: var(--text-2);
+  }
+  strong {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .msg {
+    font-size: 14px;
+    color: var(--text-2);
+  }
+  .cipher {
+    font-size: 13px;
+    color: var(--text-3);
+    word-break: break-all;
+  }
+  .note {
+    font-size: 13px;
+    color: var(--text-3);
+  }
+  .arrow {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    color: var(--text-3);
+  }
+  .arrow span {
+    flex-grow: 1;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--line-strong) 0 8px, transparent 8px 14px);
+  }
+  .table {
+    margin-top: 40px;
+    width: min(720px, 100%);
+    border-radius: 16px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .table h3 {
+    margin: 0;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .table ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .table li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 48px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--line);
+    font-size: 15px;
+  }
+  .verdict {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--ok);
+    white-space: nowrap;
+  }
+  .verdict.warn {
+    color: var(--warn);
+  }
+
+  @media (max-width: 1100px) {
+    .panel {
+      padding: 56px 32px;
+    }
+    .node {
+      width: auto;
+      flex: 1 1 0;
+    }
+    .arrow {
+      flex: 0 0 auto;
+    }
+    .arrow span {
+      display: none;
+    }
+  }
+  @media (max-width: 720px) {
+    .panel {
+      padding: 40px 18px;
+      border-radius: 22px;
+    }
+    .section-head {
+      align-items: flex-start;
+      text-align: left;
+    }
+    .flow {
+      margin-top: 28px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .node {
+      width: 100%;
+      padding: 20px;
+    }
+    .arrow {
+      transform: rotate(90deg);
+    }
+    .table li {
+      font-size: 14px;
+    }
+  }
+</style>

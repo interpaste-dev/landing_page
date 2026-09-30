@@ -1,0 +1,365 @@
+---
+import { getImage } from 'astro:assets';
+import Icon from './Icon.astro';
+import Button from './Button.astro';
+import { LINKS } from '../site';
+import appDesktop from '../assets/app-desktop.png';
+import appMobile from '../assets/app-mobile-chat.png';
+
+// Art direction: na telefonie zrzut aplikacji mobilnej w ramce telefonu,
+// od tabletu w górę — zrzut aplikacji desktopowej. Jeden <picture>, jeden request.
+const variants = async (src: ImageMetadata, widths: number[]) => ({
+  avif: await getImage({ src, widths, format: 'avif' }),
+  webp: await getImage({ src, widths, format: 'webp' }),
+});
+const mobile = await variants(appMobile, [264, 400, 528]);
+const desktop = await variants(appDesktop, [720, 1080, 1440]);
+const mobileSizes = '264px';
+const desktopSizes = '(max-width: 1180px) 92vw, 1080px';
+
+const perks = ['Bez numeru telefonu', 'Open source', 'Własny serwer', '~40 MB RAM'];
+---
+
+<section class="hero">
+  <div class="dots" aria-hidden="true"></div>
+  <div class="glow" aria-hidden="true"></div>
+
+  <div class="container copy">
+    <a href="#nowosci" class="pill">
+      <span class="pill-tag">Nowość</span>
+      <span class="pill-text">Udostępnianie ekranu 1440p · 60 FPS, też szyfrowane</span>
+      <Icon name="chevron" color="var(--text-3)" />
+    </a>
+    <h1>Serwery, czat i głos.<br /><span>Tylko dla was.</span></h1>
+    <p class="sub">
+      Komunikator dla drużyn i znajomych, w którym serwer nie może przeczytać ani jednej wiadomości. Lekki, szybki
+      i otwarty.
+    </p>
+    <div class="ctas">
+      <Button href={LINKS.windows} size="lg" class="cta-desktop"><Icon name="download" stroke={2} />Pobierz na Windows</Button>
+      <Button href={LINKS.android} size="lg" class="cta-mobile"><Icon name="download" stroke={2} />Pobierz na Androida</Button>
+      <Button href={LINKS.register} size="lg" variant="outline">Załóż konto w przeglądarce</Button>
+    </div>
+    <ul class="perks">
+      {
+        perks.map((p) => (
+          <li>
+            <Icon name="check" size={17} stroke={2} color="var(--ok)" />
+            {p}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="stage">
+    <div class="frame">
+      <picture>
+        <source media="(max-width: 720px)" type="image/avif" srcset={mobile.avif.srcSet.attribute} sizes={mobileSizes} width="390" height="844" />
+        <source media="(max-width: 720px)" type="image/webp" srcset={mobile.webp.srcSet.attribute} sizes={mobileSizes} width="390" height="844" />
+        <source type="image/avif" srcset={desktop.avif.srcSet.attribute} sizes={desktopSizes} width="1440" height="900" />
+        <source type="image/webp" srcset={desktop.webp.srcSet.attribute} sizes={desktopSizes} width="1440" height="900" />
+        <img
+          src={desktop.webp.src}
+          width="1440"
+          height="900"
+          alt="Okno aplikacji Komunikator: serwer „Drużyna ranked”, kanał #taktyka z wiadomościami, kanały głosowe i lista osób online"
+          fetchpriority="high"
+          loading="eager"
+          decoding="async"
+        />
+      </picture>
+    </div>
+
+    <div class="chip" style="left: 40px; top: 150px">
+      <span class="chip-ico ok"><Icon name="key" stroke={2} /></span>
+      <span class="chip-txt">Klucze grupy odświeżone<small>epoka 14 · MLS</small></span>
+    </div>
+    <div class="chip" style="right: 40px; top: 90px">
+      <span class="avatar">K</span>
+      <span class="chip-txt">Kuba mówi<small>Lobby · 18 ms</small></span>
+    </div>
+    <div class="chip" style="left: 0; top: 470px">
+      <span class="chip-ico"><Icon name="server" stroke={2} /></span>
+      <span class="chip-txt">Serwer widzi<small class="mono">8f3a·c21e·9b07·44d1…</small></span>
+    </div>
+    <div class="chip" style="right: 0; top: 400px">
+      <span class="chip-ico ok"><Icon name="shield" stroke={2} /></span>
+      Zweryfikowano 4 z 5 osób
+    </div>
+    <div class="fade" aria-hidden="true"></div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-top: 84px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .dots {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 900px;
+    background-image: radial-gradient(rgb(241 236 228 / 0.08) 1px, transparent 1.4px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at 50% 20%, #000 0%, transparent 70%);
+  }
+  .glow {
+    position: absolute;
+    left: 50%;
+    top: 520px;
+    width: 1400px;
+    height: 760px;
+    margin-left: -700px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 65%);
+  }
+  .copy {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    max-width: 1020px;
+    text-align: center;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 34px;
+    padding: 0 8px 0 6px;
+    border-radius: 17px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    color: var(--text-2);
+    font-size: 13.5px;
+    text-decoration: none;
+    max-width: 100%;
+  }
+  .pill-tag {
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .pill-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  h1 {
+    margin: 0;
+    font-size: 80px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+  h1 span {
+    color: var(--accent);
+  }
+  .sub {
+    margin: 0;
+    max-width: 660px;
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--text-2);
+  }
+  .ctas {
+    display: flex;
+    gap: 12px;
+    padding-top: 6px;
+  }
+  .ctas :global(.cta-mobile) {
+    display: none;
+  }
+  .perks {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 28px;
+  }
+  .perks li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  .stage {
+    position: relative;
+    margin-top: 64px;
+    width: min(1280px, 100%);
+    padding-inline: var(--gutter);
+    display: flex;
+    justify-content: center;
+    perspective: 2400px;
+  }
+  .frame {
+    width: 1080px;
+    max-width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    box-shadow:
+      0 50px 140px rgb(0 0 0 / 0.65),
+      0 0 0 8px rgb(241 236 228 / 0.03);
+    transform: rotateX(9deg);
+    transform-origin: 50% 0;
+    background: var(--bg-deep);
+  }
+  .frame img {
+    width: 100%;
+    height: auto;
+  }
+  .chip {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 46px;
+    padding: 0 16px 0 10px;
+    border-radius: 14px;
+    background: rgb(33 31 30 / 0.94);
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 16px 40px rgb(0 0 0 / 0.5);
+    font-size: 13.5px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .chip-ico {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--surface-3);
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .chip-ico.ok {
+    color: var(--ok);
+  }
+  .chip-txt {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .chip-txt small {
+    font-size: 11.5px;
+    font-weight: 400;
+    color: var(--text-3);
+  }
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #7fa392;
+    color: var(--accent-ink);
+    font-weight: 700;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      0 0 0 2px #211f1e,
+      0 0 0 4px var(--ok);
+  }
+  .fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 220px;
+    background: linear-gradient(180deg, transparent 0%, var(--bg) 85%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  @media (max-width: 1100px) {
+    h1 {
+      font-size: 64px;
+    }
+    .chip {
+      display: none;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      padding-top: 40px;
+    }
+    .copy {
+      gap: 18px;
+    }
+    h1 {
+      font-size: 40px;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+    .sub {
+      font-size: 16px;
+    }
+    .ctas {
+      width: 100%;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ctas :global(.btn) {
+      width: 100%;
+      white-space: normal;
+    }
+    .ctas :global(.cta-desktop) {
+      display: none;
+    }
+    .ctas :global(.cta-mobile) {
+      display: inline-flex;
+    }
+    .perks {
+      gap: 8px 18px;
+    }
+    .perks li {
+      font-size: 13px;
+    }
+    .glow {
+      top: 380px;
+      width: 700px;
+      height: 520px;
+      margin-left: -350px;
+    }
+    .stage {
+      margin-top: 40px;
+      padding-bottom: 32px;
+      perspective: none;
+    }
+    .frame {
+      width: 276px;
+      padding: 6px;
+      border-radius: 40px;
+      background: #050505;
+      transform: none;
+      box-shadow: 0 30px 80px rgb(0 0 0 / 0.55);
+    }
+    .frame img {
+      border-radius: 34px;
+    }
+    .fade {
+      display: none;
+    }
+  }
+</style>
