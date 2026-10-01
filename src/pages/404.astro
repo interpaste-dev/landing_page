@@ -1,0 +1,60 @@
+---
+// Wspólna strona 404 dla obu języków (Cloudflare Pages i GitHub Pages serwują dist/404.html).
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import { ui } from '../i18n/ui';
+import { route } from '../i18n/routes';
+
+const [en, pl] = [ui.en, ui.pl];
+---
+
+<Base title={`404 — ${en.a11y.notFound}`} description={en.a11y.notFoundText} alternates={{}} noindex>
+  <section class="container nf">
+    <span class="code mono">404</span>
+    <h1>{en.a11y.notFound}</h1>
+    <p>{en.a11y.notFoundText}</p>
+    <p lang="pl-PL" class="pl">{pl.a11y.notFound}. {pl.a11y.notFoundText}</p>
+    <div class="links">
+      <Button href={route('en', 'home')}>{en.a11y.homeCrumb}</Button>
+      <Button href={route('pl', 'home')} variant="outline">{pl.a11y.homeCrumb}</Button>
+      <Button href={route('en', 'help')} variant="muted">{en.nav.help}</Button>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding-top: 64px;
+    padding-bottom: 96px;
+    text-align: center;
+  }
+  .code {
+    font-size: 15px;
+    color: var(--accent);
+  }
+  h1 {
+    margin: 0;
+    font-size: 44px;
+    letter-spacing: -0.02em;
+  }
+  p {
+    margin: 0;
+    color: var(--text-2);
+  }
+  .pl {
+    color: var(--text-3);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 12px;
+  }
+</style>

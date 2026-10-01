@@ -58,7 +58,7 @@ const jsonLd = [
 
 <Base title={`${title} | ${c.crumb} ${SITE.name}`} description={description} alternates={alternates} jsonLd={jsonLd}>
   <div class="container layout">
-    <aside class="nav">
+    <aside class="nav" aria-label={c.crumb}>
       <a class="all" href={help}><Icon name="chevron" class="back" />{c.article.allTopics}</a>
       {
         groups.map((g) => (
@@ -93,7 +93,7 @@ const jsonLd = [
       </div>
     </article>
 
-    <aside class="more">
+    <aside class="more" aria-label={c.article.needMore}>
       <span class="m-title">{c.article.needMore}</span>
       <a href={`${help}#contact`}>{c.article.contact}</a>
       <a href={route(lang, 'blog')}>{c.article.blog}</a>

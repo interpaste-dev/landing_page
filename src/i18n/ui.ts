@@ -27,7 +27,7 @@ const en = {
       'Private voice and text chat for gaming teams and friends. End-to-end encrypted with MLS, encrypted voice and screen sharing, desktop and terminal apps. Free.',
     ogAlt: 'Komunikator — servers, chat and voice. Just for you.',
   },
-  a11y: { skip: 'Skip to content', openMenu: 'Open menu', closeMenu: 'Close menu', home: 'home page', language: 'Language', breadcrumb: 'Breadcrumb', homeCrumb: 'Home' },
+  a11y: { skip: 'Skip to content', openMenu: 'Open menu', closeMenu: 'Close menu', home: 'home page', language: 'Language', breadcrumb: 'Breadcrumb', homeCrumb: 'Home', mainMenu: 'Main menu', mobileMenu: 'Mobile menu', notFound: 'Page not found', notFoundText: 'This page doesn’t exist or has moved.' },
   nav: {
     features: 'Features',
     gamers: 'For gamers',
@@ -184,7 +184,7 @@ const pl: Dict = {
       'Prywatny komunikator dla drużyn i znajomych. Szyfrowanie end-to-end (MLS), szyfrowany głos i udostępnianie ekranu, aplikacja na komputer i terminal. Za darmo.',
     ogAlt: 'Komunikator — serwery, czat i głos. Tylko dla was.',
   },
-  a11y: { skip: 'Przejdź do treści', openMenu: 'Otwórz menu', closeMenu: 'Zamknij menu', home: 'strona główna', language: 'Język', breadcrumb: 'Okruszki', homeCrumb: 'Strona główna' },
+  a11y: { skip: 'Przejdź do treści', openMenu: 'Otwórz menu', closeMenu: 'Zamknij menu', home: 'strona główna', language: 'Język', breadcrumb: 'Okruszki', homeCrumb: 'Strona główna', mainMenu: 'Menu główne', mobileMenu: 'Menu mobilne', notFound: 'Nie ma takiej strony', notFoundText: 'Ta strona nie istnieje albo została przeniesiona.' },
   nav: {
     features: 'Funkcje',
     gamers: 'Dla graczy',

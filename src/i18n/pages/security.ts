@@ -2,7 +2,7 @@ import { LINKS } from '../../site';
 
 const en = {
   meta: {
-    title: 'Security: how Komunikator protects your chats (MLS, E2EE, threat model)',
+    title: 'Security: how Komunikator protects your chats (MLS, E2EE)',
     description:
       'How Komunikator encrypts messages and voice with MLS and SFrame, what the server can and can’t see, our threat model, contact verification and security audits.',
   },
