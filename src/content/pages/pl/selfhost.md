@@ -4,7 +4,7 @@ description: 'Postaw własny serwer Komunikatora z szyfrowaniem end-to-end w Doc
 heading: 'Postaw własny serwer'
 eyebrow: 'Własny serwer'
 lead: 'Hostuj Komunikator dla klanu, firmy albo znajomych. Szyfrowanie działa tak samo — serwer tylko przekazuje szyfrogramy i nigdy nie ma kluczy.'
-updatedDate: 2026-09-30
+updatedDate: 2026-10-01
 route: selfhost
 ---
 
@@ -38,8 +38,8 @@ Pierwsze uruchomienie tworzy `.env` z `.env.example` i generuje klucz podpisują
 | Port | Do czego |
 | --- | --- |
 | `8443` (dev) / `443` (produkcja) | brama TLS — klienci łączą się tu przez `wss://` |
-| TCP `7880–7881` | sygnalizacja głosu (LiveKit), tylko z włączonym głosem |
-| UDP `50000–50200` | dźwięk i obraz (LiveKit), tylko z włączonym głosem |
+| TCP `7880` | sygnalizacja głosu (LiveKit) przez TLS — `wss://` |
+| TCP `7881`, UDP `50000–50200` | dźwięk i obraz (LiveKit) |
 
 ## Przydatne ustawienia
 
@@ -50,15 +50,20 @@ Wszystkie ustawienia są w `.env`. Te, które najczęściej zmienisz:
 | `CORE_RETENTION_DAYS` | 30 | po tylu dniach dostarczone szyfrogramy są kasowane |
 | `MEDIA_QUOTA_BYTES` | 512 MiB | suma załączników jednego konta w okresie retencji |
 | `CORE_MEMORY_LIMIT` | 300 MB | budżet pamięci; powyżej 80% rdzeń ogranicza funkcje, powyżej 90% przechodzi w SAFE |
-| `VOICE_URL`, `VOICE_API_KEY` | puste | adres i klucz LiveKit; puste = głos wyłączony |
+| `AUTH_SIGNUPS_PER_DAY` | 5 | ile nowych kont można założyć z jednego adresu IP na dobę |
+| `VOICE_URL`, `VOICE_API_KEY` | puste | adres i klucz LiveKit; puste = głos wyłączony (skrypt wdrożenia sam je uzupełnia) |
 
 ## Głos
 
-Głos działa przez serwer LiveKit. Dźwięk i obraz są szyfrowane end-to-end przez SFrame na urządzeniach, więc LiveKit przekazuje tylko zaszyfrowane ramki i nie zna nazw Waszych grup. Otwórz na zaporze porty głosu z tabeli powyżej. Z domeną postaw przed LiveKitem TLS i użyj adresu `wss://`.
+Głos działa przez serwer LiveKit. Dźwięk i obraz są szyfrowane end-to-end przez SFrame na urządzeniach, więc LiveKit przekazuje tylko zaszyfrowane ramki i nie zna nazw Waszych grup. Otwórz na zaporze porty głosu z tabeli powyżej.
+
+Skrypt wdrożenia domyślnie włącza głos (`DEPLOY_VOICE=0` go wyłącza). Sygnalizacja idzie przez TLS na porcie 7880, z certyfikatem podpisanym certyfikatem bramy — klienci nie potrzebują dodatkowego pliku. Jeden kanał głosowy wytrzymał w teście obciążeniowym 100 osób (pokój mieści do 150).
 
 ## Certyfikaty
 
 Świeży serwer ma certyfikat samopodpisany. Klienci potrzebują wtedy pliku `var/secrets/gate_cert.pem` — wskazują go w polu **certyfikat CA (opcjonalnie)** na ekranie logowania. Z domeną użyj zwykłego certyfikatu, a nikt nie musi niczego dodawać. Jeśli aplikacja mówi, że certyfikat nie jest zaufany, zobacz [ten artykuł pomocy](/pl/pomoc/certyfikat-serwera-niezaufany/).
+
+`/healthz` zaczyna zwracać 503 na 30 dni przed wygaśnięciem certyfikatu bramy, więc monitoring wyłapie to na czas.
 
 ## Wdrożenie na serwer
 

@@ -3,7 +3,7 @@ export const SITE = {
   name: 'Komunikator',
   themeColor: '#121111',
   ogImage: '/og.png',
-  version: '0.1.0',
+  version: '0.1.1',
 };
 
 // TODO: podmienić na prawdziwe adresy, gdy będą gotowe.

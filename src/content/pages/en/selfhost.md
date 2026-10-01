@@ -4,7 +4,7 @@ description: 'Run your own end-to-end encrypted Komunikator server with Docker: 
 heading: 'Run your own server'
 eyebrow: 'Self-hosting'
 lead: 'Host Komunikator for your clan, company or friends. Encryption works exactly the same — the server only relays ciphertext and never has the keys.'
-updatedDate: 2026-09-30
+updatedDate: 2026-10-01
 route: selfhost
 ---
 
@@ -38,8 +38,8 @@ The first run creates `.env` from `.env.example` and generates the signing key. 
 | Port | What for |
 | --- | --- |
 | `8443` (dev) / `443` (production) | TLS gateway — clients connect here over `wss://` |
-| TCP `7880–7881` | voice signalling (LiveKit), only with voice on |
-| UDP `50000–50200` | voice media (LiveKit), only with voice on |
+| TCP `7880` | voice signalling (LiveKit) over TLS — `wss://` |
+| TCP `7881`, UDP `50000–50200` | voice media (LiveKit) |
 
 ## Useful settings
 
@@ -50,15 +50,20 @@ All settings live in `.env`. The ones you’re most likely to change:
 | `CORE_RETENTION_DAYS` | 30 | delivered ciphertext is deleted after this many days |
 | `MEDIA_QUOTA_BYTES` | 512 MiB | total attachments per account within the retention period |
 | `CORE_MEMORY_LIMIT` | 300 MB | memory budget; above 80% the core limits features, above 90% it switches to SAFE |
-| `VOICE_URL`, `VOICE_API_KEY` | empty | LiveKit address and key; empty means voice is off |
+| `AUTH_SIGNUPS_PER_DAY` | 5 | new accounts allowed from one IP address per day |
+| `VOICE_URL`, `VOICE_API_KEY` | empty | LiveKit address and key; empty means voice is off (the deploy script fills them in) |
 
 ## Voice
 
-Voice uses a LiveKit server. Audio and video are end-to-end encrypted with SFrame on devices, so LiveKit only forwards encrypted frames and never knows your group names. Open the voice ports above on your firewall. With a domain, put TLS in front of LiveKit and use a `wss://` address.
+Voice uses a LiveKit server. Audio and video are end-to-end encrypted with SFrame on devices, so LiveKit only forwards encrypted frames and never knows your group names. Open the voice ports above on your firewall.
+
+The deploy script turns voice on by default (`DEPLOY_VOICE=0` turns it off). Signalling runs over TLS on port 7880, with a certificate signed by your gateway certificate — clients don’t need any extra file. One voice channel handles 100 people in a load test (rooms take up to 150).
 
 ## Certificates
 
 A fresh server uses a self-signed certificate. Clients then need its `var/secrets/gate_cert.pem` file — they select it under **CA certificate (optional)** on the login screen. With a domain, use a regular certificate and nobody has to add anything. If the app says the certificate isn’t trusted, see [this help article](/help/server-certificate-not-trusted/).
+
+`/healthz` starts returning 503 thirty days before the gateway certificate expires, so your monitoring catches it in time.
 
 ## Deploying to a server
 

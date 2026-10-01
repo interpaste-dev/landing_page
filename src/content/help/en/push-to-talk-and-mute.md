@@ -3,7 +3,7 @@ title: 'Push-to-talk and muting while you play'
 description: 'How to mute your microphone and use push-to-talk in Komunikator: keyboard shortcuts in the desktop app, push-to-talk in the terminal client and noise suppression.'
 category: voice
 translationKey: ptt-mute
-updatedDate: 2026-09-30
+updatedDate: 2026-10-01
 appliesTo: '0.1+'
 popular: 4
 ---
@@ -23,6 +23,12 @@ The desktop app doesn’t have push-to-talk yet — a global push-to-talk key is
 3. **Test your microphone**
 
    In the same place, use the microphone test: the level bar moves live and you can listen to yourself.
+
+4. **Set input sensitivity**
+
+   Under **Input sensitivity**, the microphone only transmits when you’re louder than the threshold (the vertical line on the level bar) — keyboard clicks and fan noise stay out. **Determine automatically** makes the threshold follow your background noise.
+
+You can switch your microphone or headphones during a call — the call keeps going on the new device.
 
 ## Terminal client
 

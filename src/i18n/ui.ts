@@ -43,7 +43,7 @@ const en = {
   },
   hero: {
     pillTag: 'New',
-    pill: 'Screen and camera sharing, end-to-end encrypted',
+    pill: 'v0.1.1: clearer voice and input sensitivity',
     titleA: 'Servers, chat and voice.',
     titleB: 'Just for you.',
     sub: 'A chat app for gaming teams and friends where the server can’t read a single message. Native, fast and free.',
@@ -200,7 +200,7 @@ const pl: Dict = {
   },
   hero: {
     pillTag: 'Nowość',
-    pill: 'Udostępnianie ekranu i kamery, szyfrowane end-to-end',
+    pill: 'v0.1.1: czystszy głos i czułość mikrofonu',
     titleA: 'Serwery, czat i głos.',
     titleB: 'Tylko dla was.',
     sub: 'Komunikator dla drużyn i znajomych, w którym serwer nie może przeczytać ani jednej wiadomości. Natywny, szybki i darmowy.',

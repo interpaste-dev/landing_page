@@ -3,7 +3,7 @@ title: 'Push-to-talk i wyciszanie w trakcie gry'
 description: 'Jak wyciszać mikrofon i używać push-to-talk w Komunikatorze: skróty w aplikacji na komputer, push-to-talk w kliencie terminalowym i redukcja szumów.'
 category: voice
 translationKey: ptt-mute
-updatedDate: 2026-09-30
+updatedDate: 2026-10-01
 appliesTo: '0.1+'
 popular: 4
 ---
@@ -23,6 +23,12 @@ Aplikacja na komputer nie ma jeszcze push-to-talk — globalny klawisz jest w pl
 3. **Przetestuj mikrofon**
 
    W tym samym miejscu jest test mikrofonu: pasek poziomu rusza się na żywo i możesz usłyszeć siebie.
+
+4. **Ustaw czułość wejścia**
+
+   W **Czułość wejścia** mikrofon nadaje tylko wtedy, gdy mówisz głośniej niż próg (pionowa kreska na pasku poziomu) — stukanie klawiatury i szum wentylatora zostają u Ciebie. **Ustalaj automatycznie** sprawia, że próg podąża za szumem tła.
+
+Mikrofon albo słuchawki możesz zmienić w trakcie rozmowy — rozmowa trwa dalej na nowym urządzeniu.
 
 ## Klient terminalowy
 
