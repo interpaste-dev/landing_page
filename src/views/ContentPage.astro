@@ -1,5 +1,6 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
+import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Button from '../components/Button.astro';
@@ -17,7 +18,7 @@ const { page } = Astro.props;
 const lang = getLang(Astro.currentLocale);
 const t = useT(lang);
 const { Content } = await render(page);
-const { title, description, heading, eyebrow, lead, updatedDate, route: key, schema, cta } = page.data;
+const { title, description, heading, eyebrow, lead, updatedDate, route: key, schema, cta, image, imageAlt } = page.data;
 const site = Astro.site!;
 const url = new URL(route(lang, key), site).href;
 const updated = lang === 'pl' ? 'Zaktualizowano' : 'Updated';
@@ -62,6 +63,21 @@ const jsonLd = [
       <p class="lede">{lead}</p>
       <p class="meta">{updated} <time datetime={updatedDate.toISOString().slice(0, 10)}>{formatDate(lang, updatedDate)}</time></p>
     </header>
+    {
+      image && (
+        <Picture
+          class="shot"
+          src={image}
+          alt={imageAlt ?? ''}
+          formats={['avif', 'webp']}
+          fallbackFormat="webp"
+          widths={[390, 780, 1200, 1500]}
+          sizes="(max-width: 900px) 92vw, 820px"
+          loading="eager"
+          fetchpriority="high"
+        />
+      )
+    }
     <div class="prose">
       <Content />
     </div>
@@ -109,6 +125,14 @@ const jsonLd = [
     margin: 0;
     font-size: 13.5px;
     color: var(--text-3);
+  }
+  .page :global(.shot) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 28px;
+    border-radius: 14px;
+    border: 1px solid var(--line-strong);
   }
   .prose {
     padding-top: 8px;

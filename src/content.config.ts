@@ -35,7 +35,7 @@ const help = defineCollection({
 // Strony treściowe (SEO, prawne): src/content/pages/<język>/<klucz trasy>.md — adres bierze się z src/i18n/routes.ts.
 const pages = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/pages' }),
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string().max(70),
     description: z.string().min(70).max(170),
     heading: z.string(),
@@ -46,6 +46,9 @@ const pages = defineCollection({
     /** app = strona produktu (JSON-LD SoftwareApplication), page = zwykła strona. */
     schema: z.enum(['app', 'page']).default('page'),
     cta: z.boolean().default(true),
+    /** Zrzut nad treścią — ładowany od razu, bo zwykle jest elementem LCP. */
+    image: image().optional(),
+    imageAlt: z.string().optional(),
   }),
 });
 

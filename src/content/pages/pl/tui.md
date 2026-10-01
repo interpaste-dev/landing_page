@@ -7,9 +7,10 @@ lead: 'Pełny klient Komunikatora, który działa w każdym terminalu — także
 updatedDate: 2026-09-30
 route: tui
 schema: app
+image: ../../../assets/app-tui.png
+imageAlt: 'Klient terminalowy Komunikatora: lista rozmów, czat grupowy z reakcjami i potwierdzeniami przeczytania oraz lista członków'
 ---
 
-![Klient terminalowy Komunikatora: lista rozmów, czat grupowy z reakcjami i potwierdzeniami przeczytania oraz lista członków](../../../assets/app-tui.png)
 
 ## Co potrafi
 

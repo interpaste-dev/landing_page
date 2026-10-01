@@ -7,9 +7,10 @@ lead: 'A full Komunikator client that runs in any terminal — and over SSH. The
 updatedDate: 2026-09-30
 route: tui
 schema: app
+image: ../../../assets/app-tui.png
+imageAlt: 'Komunikator terminal client: the conversation list, a group chat with reactions and read receipts, and the member list'
 ---
 
-![Komunikator terminal client: the conversation list, a group chat with reactions and read receipts, and the member list](../../../assets/app-tui.png)
 
 ## What it can do
 

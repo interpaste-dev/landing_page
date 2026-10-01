@@ -71,27 +71,19 @@ Fakty na stronie (platformy, funkcje, limity, tryby serwera, skróty) są sprawd
                           HTML + inline CSS · AVIF/WebP · sitemap · 4× RSS · robots.txt · _headers
 ```
 
-## PageSpeed (Lighthouse, mobile)
+## PageSpeed (Lighthouse)
 
-Emulacja Moto G Power, throttling 4× CPU i wolne 4G.
+Wszystkie 44 strony (EN i PL), mobile: emulacja Moto G Power, throttling 4× CPU i wolne 4G.
 
-| Strona                                   | Performance | Accessibility | Best Practices | SEO |
-| ---------------------------------------- | :---------: | :-----------: | :------------: | :-: |
-| `/`                                      |     100     |      100      |      100       | 100 |
-| `/pl/`                                   |     100     |      100      |      100       | 100 |
-| `/for-gamers/`                           |     100     |      100      |      100       | 100 |
-| `/security/`                             |     100     |      100      |      100       | 100 |
-| `/pl/pobierz/`                           |     100     |      100      |      100       | 100 |
-| `/pl/nowosci/`                           |     100     |      100      |      100       | 100 |
-| `/help/`                                 |     100     |      100      |      100       | 100 |
-| `/pl/pomoc/przywracanie-konta-z-kopii/`  |     100     |      100      |      100       | 100 |
-| `/pl/blog/`                              |     100     |      100      |      100       | 100 |
-| `/blog/private-discord-alternative/`     |     100     |      100      |      100       | 100 |
+| Zakres                         | Performance | Accessibility | Best Practices | SEO |
+| ------------------------------ | :---------: | :-----------: | :------------: | :-: |
+| 44/44 strony — mobile          |     100     |      100      |      100       | 100 |
+| 9 kluczowych stron — desktop   |     100     |      100      |      100       | 100 |
 
 ```
 Core Web Vitals (mobile)
 
-LCP   1.2 s   ██████░░░░░░░░░░░░░░  próg „dobry”: ≤ 2.5 s
+LCP   1.1–1.2 s ██████░░░░░░░░░░░░  próg „dobry”: ≤ 2.5 s  (desktop: 0.3 s)
 TBT   0 ms    ░░░░░░░░░░░░░░░░░░░░  próg „dobry”: ≤ 200 ms
 CLS   0       ░░░░░░░░░░░░░░░░░░░░  próg „dobry”: ≤ 0.1
 FCP   0.8 s   ████░░░░░░░░░░░░░░░░  próg „dobry”: ≤ 1.8 s
