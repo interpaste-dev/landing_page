@@ -185,6 +185,7 @@ const jsonLd = [
   .prose :global(pre code) {
     padding: 0;
     background: none;
+    font-size: inherit;
   }
   .prose :global(img) {
     display: block;
@@ -263,8 +264,28 @@ const jsonLd = [
     .prose :global(h2) {
       font-size: 22px;
     }
+    /* Na telefonie zawijamy linie: przewijanie w bok wygląda jak ucięty kod. */
     .prose :global(pre) {
-      font-size: 12.5px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    /* Tabela musi zmieścić się w 360 px: ciaśniejsze komórki, łamanie nazw zmiennych. */
+    .prose :global(table) {
+      font-size: 14px;
+    }
+    .prose :global(th),
+    .prose :global(td) {
+      padding: 10px 8px;
+      white-space: normal;
+    }
+    .prose :global(th:first-child),
+    .prose :global(td:first-child) {
+      padding-left: 0;
+    }
+    .prose :global(td) {
+      hyphens: auto;
+      overflow-wrap: anywhere;
     }
     .cta {
       padding: 22px;

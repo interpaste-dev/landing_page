@@ -27,7 +27,7 @@ const jsonLd = [
     '@type': 'SoftwareApplication',
     name: SITE.name,
     applicationCategory: 'CommunicationApplication',
-    operatingSystem: 'Windows 10, Windows 11, Linux, Android 9+',
+    operatingSystem: 'Windows 10, Windows 11, macOS, Linux',
     softwareVersion: v,
     inLanguage: LOCALE[lang].intl,
     isAccessibleForFree: true,
@@ -56,7 +56,7 @@ const jsonLd = [
         <div class="detect-top">
           <span class="detect-ico"><Icon name="monitor" size={22} /></span>
           <div>
-            <span class="small">{c.detected}</span>
+            <span class="small" data-detected data-phone={c.onPhone}>{c.detected}</span>
             <strong data-os>{c.platforms.windows.os}</strong>
           </div>
         </div>
@@ -146,20 +146,28 @@ komunikator      {c.verify.placeholder}</code></pre>
         <a href={route(lang, 'selfhost')}>{c.self.guide}</a>
       </div>
       <pre><code><span class="cm">{c.self.comment}</span>
-./scripts/stack.sh up       <span class="cm"># .env, key, build, start</span>
-./scripts/stack.sh status   <span class="cm"># {c.self.status}</span>
-./scripts/stack.sh logs     <span class="cm"># {c.self.logs}</span></code></pre>
+./scripts/stack.sh up
+<span class="cm"># {c.self.status}</span>
+./scripts/stack.sh status
+<span class="cm"># {c.self.logs}</span>
+./scripts/stack.sh logs</code></pre>
     </div>
   </section>
 </Base>
 
 <script is:inline>
-  // Podmienia kartę „Wykryliśmy Twój system” na Linux albo Androida. Bez JS zostaje Windows.
+  // Podmienia kartę „Wykryliśmy Twój system” na Linux albo macOS. Bez JS zostaje Windows.
+  // Na telefonie zostaje Windows, ale z dopiskiem, że aplikacje mobilne są w drodze.
   (function () {
     var el = document.getElementById('detect');
     if (!el) return;
     var ua = navigator.userAgent;
-    var key = /Android|iPhone|iPad/i.test(ua) ? null : /Mac/.test(ua) ? 'macos' : /Linux|X11/.test(ua) ? 'linux' : null;
+    if (/Android|iPhone|iPad/i.test(ua)) {
+      var d = el.querySelector('[data-detected]');
+      d.textContent = d.dataset.phone;
+      return;
+    }
+    var key = /Mac/.test(ua) ? 'macos' : /Linux|X11/.test(ua) ? 'linux' : null;
     if (!key) return;
     var p = JSON.parse(el.dataset.platforms)[key];
     el.querySelector('[data-os]').textContent = p.os;
@@ -423,6 +431,11 @@ komunikator      {c.verify.placeholder}</code></pre>
     .self-copy {
       width: 100%;
     }
+    /* W kolumnie flex-basis 0 zwija <pre> z overflow do zera. */
+    .codes,
+    .self pre {
+      flex: none;
+    }
     .others {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -454,8 +467,11 @@ komunikator      {c.verify.placeholder}</code></pre>
       padding: 22px;
       gap: 24px;
     }
+    /* Na telefonie zawijamy linie: przewijanie w bok wygląda jak ucięty kod. */
     pre {
-      font-size: 12.5px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
   }
   @media (max-width: 420px) {
